@@ -1,0 +1,270 @@
+# EESchema Netlist Version 1.1 created  10/7/2008-05:35:04
+(
+ ( /48044756 C1 C1 100n
+  ( 1 GND )
+  ( 2 VCC )
+ )
+ ( /48044769 C1V7 C2 10u
+  ( 1 GND )
+  ( 2 VCC )
+ )
+ ( /48044750 C1 C3 22p
+  ( 1 N-000050 )
+  ( 2 GND )
+ )
+ ( /48044754 C1 C4 22p
+  ( 1 N-000049 )
+  ( 2 GND )
+ )
+ ( /48044791 D3 D1 3.6V
+  ( 1 GND )
+  ( 2 N-000021 )
+ )
+ ( /48044798 D3 D2 3.6V
+  ( 1 GND )
+  ( 2 N-000019 )
+ )
+ ( /480447FC atmel-DIL40 IC1 MEGA32-P
+  ( 1 /C0 )
+  ( 2 /C1 )
+  ( 3 /C2 )
+  ( 4 /C3 )
+  ( 5 /C4 )
+  ( 6 /MOSI )
+  ( 7 /MISO )
+  ( 8 /SCK )
+  ( 9 /Reset )
+  ( 10 VCC )
+  ( 11 GND )
+  ( 12 N-000050 )
+  ( 13 N-000049 )
+  ( 14 N-000006 )
+  ( 15 N-000008 )
+  ( 16 N-000005 )
+  ( 17 N-000017 )
+  ( 18 N-000014 )
+  ( 19 N-000012 )
+  ( 20 N-000013 )
+  ( 21 N-000007 )
+  ( 22 /R15 )
+  ( 23 /R14 )
+  ( 24 /R13 )
+  ( 25 /R12 )
+  ( 26 /R11 )
+  ( 27 /R10 )
+  ( 28 /R9 )
+  ( 29 /R8 )
+  ( 30 ? )
+  ( 31 ? )
+  ( 32 ? )
+  ( 33 /R7 )
+  ( 34 /R6 )
+  ( 35 /R5 )
+  ( 36 /R4 )
+  ( 37 /R3 )
+  ( 38 /R2 )
+  ( 39 /R1 )
+  ( 40 /R0 )
+ )
+ ( /480446AA CONN_USB-B J1 USB
+  ( 1 VCC )
+  ( 2 N-000004 )
+  ( 3 N-000018 )
+  ( 4 GND )
+  ( 5 GND )
+  ( 6 GND )
+ )
+ ( /48044A02 pinhead-1X16 JP1 PINHD-1X16M
+  ( 1 /R0 )
+  ( 2 /R1 )
+  ( 3 /R2 )
+  ( 4 /R3 )
+  ( 5 /R4 )
+  ( 6 /R5 )
+  ( 7 /R6 )
+  ( 8 /R7 )
+  ( 9 /R8 )
+  ( 10 /R9 )
+  ( 11 /R10 )
+  ( 12 /R11 )
+  ( 13 /R12 )
+  ( 14 /R13 )
+  ( 15 /R14 )
+  ( 16 /R15 )
+ )
+ ( /48044A0E pinhead-1X08 JP2 PINHD-1X8M
+  ( 1 /C0 )
+  ( 2 /C1 )
+  ( 3 /C2 )
+  ( 4 /C3 )
+  ( 5 /C4 )
+  ( 6 /MOSI )
+  ( 7 /MISO )
+  ( 8 /SCK )
+ )
+ ( /48044A1E pinhead-1X04 JP3 PINHD-1X4M
+  ( 1 N-000011 )
+  ( 2 VCC )
+  ( 3 N-000015 )
+  ( 4 N-000010 )
+ )
+ ( /480486B7 pinhead-1X02 JP4 JUMPER
+  ( 1 N-000008 )
+  ( 2 GND )
+ )
+ ( /480486CC pinhead-1X02 JP5 JUMPER
+  ( 1 N-000017 )
+  ( 2 GND )
+ )
+ ( /480486D0 pinhead-1X02 JP6 JUMPER
+  ( 1 N-000007 )
+  ( 2 GND )
+ )
+ ( /48044A4D atmel-AVR-ISP-10 JP7 PINHD-2X5M
+  ( 1 /MOSI )
+  ( 2 VCC )
+  ( 3 ? )
+  ( 4 GND )
+  ( 5 /Reset )
+  ( 6 GND )
+  ( 7 /SCK )
+  ( 8 GND )
+  ( 9 /MISO )
+  ( 10 GND )
+ )
+ ( /4808C81B pinhead-1X04 JP10 PINHD-1X4
+  ( 1 VCC )
+  ( 2 N-000003 )
+  ( 3 N-000020 )
+  ( 4 GND )
+ )
+ ( /4808E9AB pinhead-1X03 JP11 PINHD-1X3
+  ( 1 N-000020 )
+  ( 2 N-000018 )
+  ( 3 N-000019 )
+ )
+ ( /4808E9BA pinhead-1X03 JP12 PINHD-1X3
+  ( 1 N-000003 )
+  ( 2 N-000004 )
+  ( 3 N-000021 )
+ )
+ ( /4808E9EA pinhead-1X04 JP13 PINHD-1X4
+  ( 1 VCC )
+  ( 2 N-000021 )
+  ( 3 N-000019 )
+  ( 4 GND )
+ )
+ ( /48061210 connect-CLAMP-02 P1 CONN_2
+  ( 1 GND )
+  ( 2 GND )
+ )
+ ( /4804473F R3 R1 10k
+  ( 1 /Reset )
+  ( 2 VCC )
+ )
+ ( /4804473B R3 R2 2k2
+  ( 1 VCC )
+  ( 2 N-000021 )
+ )
+ ( /48044733 R3 R3 470
+  ( 1 N-000011 )
+  ( 2 N-000013 )
+ )
+ ( /48044731 R3 R4 470
+  ( 1 N-000015 )
+  ( 2 N-000012 )
+ )
+ ( /4804472B R3 R5 470
+  ( 1 N-000010 )
+  ( 2 N-000014 )
+ )
+ ( /48044739 R3 R6 4k7
+  ( 1 N-000021 )
+  ( 2 GND )
+ )
+ ( /48044741 R3 R7 68
+  ( 1 N-000019 )
+  ( 2 N-000005 )
+ )
+ ( /48044743 R3 R8 68
+  ( 1 N-000021 )
+  ( 2 N-000006 )
+ )
+ ( /4804477C HC-18UV X1 12MHz
+  ( 1 N-000050 )
+  ( 2 N-000049 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SM*
+ C?
+ C1-1
+$endlist
+$component C2
+ CP*
+ SM*
+$endlist
+$component C3
+ SM*
+ C?
+ C1-1
+$endlist
+$component C4
+ SM*
+ C?
+ C1-1
+$endlist
+$component D1
+ D?
+ SO*
+ SM*
+$endlist
+$component D2
+ D?
+ SO*
+ SM*
+$endlist
+$component R1
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R3
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R4
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R5
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R6
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R7
+ R?
+ SM0603
+ SM0805
+$endlist
+$component R8
+ R?
+ SM0603
+ SM0805
+$endlist
+$endfootprintlist
+}

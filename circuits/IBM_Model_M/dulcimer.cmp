@@ -1,0 +1,206 @@
+Cmp-Mod V01 Created by Cvpcb (20080320-r918) date = 10/7/2008-05:35:04
+
+BeginCmp
+TimeStamp = /48044756;
+Reference = C1;
+ValeurCmp = 100n;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044769;
+Reference = C2;
+ValeurCmp = 10u;
+IdModule  = C1V7;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044750;
+Reference = C3;
+ValeurCmp = 22p;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044754;
+Reference = C4;
+ValeurCmp = 22p;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044791;
+Reference = D1;
+ValeurCmp = 3.6V;
+IdModule  = D3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044798;
+Reference = D2;
+ValeurCmp = 3.6V;
+IdModule  = D3;
+EndCmp
+
+BeginCmp
+TimeStamp = /480447FC;
+Reference = IC1;
+ValeurCmp = MEGA32-P;
+IdModule  = atmel-DIL40;
+EndCmp
+
+BeginCmp
+TimeStamp = /480446AA;
+Reference = J1;
+ValeurCmp = USB;
+IdModule  = CONN_USB-B;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044A02;
+Reference = JP1;
+ValeurCmp = PINHD-1X16M;
+IdModule  = pinhead-1X16;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044A0E;
+Reference = JP2;
+ValeurCmp = PINHD-1X8M;
+IdModule  = pinhead-1X08;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044A1E;
+Reference = JP3;
+ValeurCmp = PINHD-1X4M;
+IdModule  = pinhead-1X04;
+EndCmp
+
+BeginCmp
+TimeStamp = /480486B7;
+Reference = JP4;
+ValeurCmp = JUMPER;
+IdModule  = pinhead-1X02;
+EndCmp
+
+BeginCmp
+TimeStamp = /480486CC;
+Reference = JP5;
+ValeurCmp = JUMPER;
+IdModule  = pinhead-1X02;
+EndCmp
+
+BeginCmp
+TimeStamp = /480486D0;
+Reference = JP6;
+ValeurCmp = JUMPER;
+IdModule  = pinhead-1X02;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044A4D;
+Reference = JP7;
+ValeurCmp = PINHD-2X5M;
+IdModule  = atmel-AVR-ISP-10;
+EndCmp
+
+BeginCmp
+TimeStamp = /4808C81B;
+Reference = JP10;
+ValeurCmp = PINHD-1X4;
+IdModule  = pinhead-1X04;
+EndCmp
+
+BeginCmp
+TimeStamp = /4808E9AB;
+Reference = JP11;
+ValeurCmp = PINHD-1X3;
+IdModule  = pinhead-1X03;
+EndCmp
+
+BeginCmp
+TimeStamp = /4808E9BA;
+Reference = JP12;
+ValeurCmp = PINHD-1X3;
+IdModule  = pinhead-1X03;
+EndCmp
+
+BeginCmp
+TimeStamp = /4808E9EA;
+Reference = JP13;
+ValeurCmp = PINHD-1X4;
+IdModule  = pinhead-1X04;
+EndCmp
+
+BeginCmp
+TimeStamp = /48061210;
+Reference = P1;
+ValeurCmp = CONN_2;
+IdModule  = connect-CLAMP-02;
+EndCmp
+
+BeginCmp
+TimeStamp = /4804473F;
+Reference = R1;
+ValeurCmp = 10k;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4804473B;
+Reference = R2;
+ValeurCmp = 2k2;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044733;
+Reference = R3;
+ValeurCmp = 470;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044731;
+Reference = R4;
+ValeurCmp = 470;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4804472B;
+Reference = R5;
+ValeurCmp = 470;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044739;
+Reference = R6;
+ValeurCmp = 4k7;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044741;
+Reference = R7;
+ValeurCmp = 68;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /48044743;
+Reference = R8;
+ValeurCmp = 68;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4804477C;
+Reference = X1;
+ValeurCmp = 12MHz;
+IdModule  = HC-18UV;
+EndCmp
+
+EndListe

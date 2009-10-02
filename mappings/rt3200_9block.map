@@ -1,0 +1,11 @@
+KEY_PrtScr	KEY_ins
+KEY_scrlck	KEY_home
+KEY_break	KEY_pgup
+
+KEY_ins		KEY_del
+KEY_home	KEY_end
+KEY_pgup	KEY_pgdn
+
+KEY_del	 	KEY_PrtScr
+KEY_end	 	KEY_scrlck
+KEY_pgdn	KEY_break

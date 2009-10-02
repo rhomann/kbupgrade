@@ -1,0 +1,33 @@
+Device IBM RT-3200 (Space Saver II)
+
+# Key MOD_LGUI* is the wimpkey on the left-hand side of the keyboard.
+
+# matrix starts with second pin; first pin is common GND for the mouse buttons
+KEY_F5 KEY_F9 KEY_F10 KEY_spc KEY_enter KEY_bckslsh KEY_bckspc
+KEY_esc KEY_grave KEY_1 KEY_tab KEY_Q KEY_A KEY_Z
+KEY_F1 KEY_2 KEY_W KEY_S KEY_X KEY_Euro KEY_cpslck
+KEY_F11 KEY_darr KEY_del
+KEY_F7 KEY_F8 KEY_9 KEY_O KEY_L KEY_dot
+KEY_0 KEY_minus KEY_P KEY_lbr KEY_ping KEY_smcol KEY_slash KEY_hash
+KEY_equal KEY_rbr KEY_comma KEY_K KEY_I KEY_8 KEY_F6
+KEY_M KEY_N KEY_J KEY_H KEY_U KEY_Y KEY_6 KEY_7
+KEY_B KEY_V KEY_G KEY_F KEY_T KEY_R KEY_4 KEY_5
+KEY_C KEY_D KEY_E KEY_3 KEY_F2 KEY_F3 KEY_F4
+MOD_LSHIFT MOD_RSHIFT
+KEY_F12 KEY_ins KEY_rarr
+KEY_PrtScr KEY_scrlck MOD_RALT MOD_LALT
+KEY_break KEY_home KEY_end KEY_larr KEY_uarr
+KEY_pgup KEY_pgdn
+MOD_LGUI
+MOD_LCTRL MOD_RCTRL
+MOD_LGUI* MOD_RGUI
+
+# matrix starts with first pin; last three pins are mouse buttons
+KEY_rarr KEY_darr KEY_larr MOD_RALT KEY_slash KEY_spc KEY_B KEY_N
+KEY_break KEY_enter KEY_hash MOD_RSHIFT MOD_RCTRL MOD_LGUI KEY_dot KEY_comma KEY_M KEY_V KEY_C KEY_X KEY_Z
+KEY_bckslsh KEY_smcol KEY_L KEY_K KEY_J KEY_A KEY_S KEY_D KEY_F MOD_LGUI*
+KEY_scrlck MOD_RGUI KEY_P KEY_O KEY_I KEY_U KEY_Q KEY_W KEY_E KEY_R
+KEY_bckspc KEY_lbr KEY_rbr KEY_T KEY_Y KEY_F7 KEY_F3 KEY_tab KEY_cpslck MOD_LSHIFT
+KEY_F12 KEY_F11 KEY_F10 KEY_0 KEY_9 KEY_8 KEY_7 KEY_4 KEY_3 KEY_2 KEY_1 KEY_PrtScr KEY_pgdn KEY_end
+KEY_F9 KEY_F8 KEY_minus KEY_equal KEY_6 KEY_5 KEY_F1 KEY_F2 KEY_grave MOD_LCTRL KEY_ins KEY_del KEY_home KEY_pgup
+KEY_F6 KEY_F5 KEY_F4 KEY_esc MOD_LALT KEY_Euro KEY_G KEY_H KEY_ping KEY_uarr

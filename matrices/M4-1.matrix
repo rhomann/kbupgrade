@@ -1,0 +1,31 @@
+Device IBM M4-1
+
+MOD_LSHIFT
+MOD_LALT
+MOD_LCTRL
+KEY_Z    KEY_tab    KEY_Q   KEY_A    KEY_grave  KEY_1      KEY_esc
+KEY_X    KEY_S      KEY_W   KEY_2    KEY_F1     KEY_cpslck KEY_Euro
+KEY_C    KEY_D      KEY_E   KEY_3    KEY_F2     KEY_F3     KEY_F4
+KEY_B    KEY_V      KEY_G   KEY_F    KEY_T      KEY_R      KEY_5        KEY_4
+KEY_spc  KEY_F5     KEY_F9  KEY_F10  KEY_bckspc KEY_enter  KEY_bckslsh
+KEY_N    KEY_M      KEY_H   KEY_J    KEY_Y      KEY_U      KEY_6        KEY_7
+KEY_K    KEY_I      KEY_8   KEY_F6   KEY_comma  KEY_equal  KEY_rbr
+KEY_dot  KEY_L      KEY_O   KEY_9    KEY_F7     KEY_F8
+KEY_P    KEY_0      KEY_lbr KEY_ping KEY_slash  KEY_smcol  KEY_minus
+MOD_RSHIFT
+KEY_F11  KEY_del    KEY_darr
+KEY_F12  KEY_ins    KEY_rarr
+MOD_RALT KEY_PrtScr KEY_scrlck
+MOD_RCTRL
+KEY_larr KEY_uarr   KEY_end KEY_home KEY_break
+KEY_pgup KEY_pgdn
+
+KEY_F4 KEY_F5 KEY_F6   KEY_esc
+KEY_T  KEY_Y  KEY_F3   KEY_F7   KEY_tab  KEY_bckspc   KEY_rbr  KEY_lbr   MOD_LSHIFT KEY_cpslck
+KEY_Q  KEY_W  KEY_E    KEY_R    KEY_U    KEY_scrlck   KEY_I    KEY_O     KEY_P
+KEY_G  KEY_H  MOD_LALT KEY_ping KEY_uarr KEY_Euro
+KEY_A  KEY_S  KEY_D    KEY_F    KEY_J    KEY_bckslsh  KEY_K    KEY_L     KEY_smcol
+KEY_Z  KEY_X  KEY_C    KEY_V    KEY_M    KEY_comma    KEY_dot  MOD_RCTRL MOD_RSHIFT KEY_enter  KEY_break
+KEY_B  KEY_N  KEY_spc  MOD_RALT KEY_larr KEY_darr     KEY_rarr KEY_slash
+KEY_5  KEY_6  KEY_del  KEY_ins  KEY_home KEY_pgup     KEY_F1   KEY_equal KEY_minus  KEY_grave  MOD_LCTRL KEY_F2 KEY_F8 KEY_F9
+KEY_7  KEY_8  KEY_9    KEY_0    KEY_end  KEY_pgdn     KEY_F10  KEY_F11   KEY_F12    KEY_PrtScr KEY_1     KEY_2  KEY_3  KEY_4

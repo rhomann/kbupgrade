@@ -1,0 +1,67 @@
+EESchema (20080320-r918)  >> Creation date: 10/7/2008-05:33:42
+
+#Cmp ( order = Reference )
+| C1         100n        
+| C2         10u         
+| C3         22p         
+| C4         22p         
+| D1         3.6V        
+| D2         3.6V        
+| IC1        MEGA32-P    
+| J1         USB         
+| JP1        PINHD-1X16M 
+| JP10       PINHD-1X4   
+| JP11       PINHD-1X3   
+| JP12       PINHD-1X3   
+| JP13       PINHD-1X4   
+| JP2        PINHD-1X8M  
+| JP3        PINHD-1X4M  
+| JP4        JUMPER      
+| JP5        JUMPER      
+| JP6        JUMPER      
+| JP7        PINHD-2X5M  
+| P1         CONN_2      
+| R1         10k         
+| R2         2k2         
+| R3         470         
+| R4         470         
+| R5         470         
+| R6         4k7         
+| R7         68          
+| R8         68          
+| X1         12MHz       
+#End Cmp
+
+#Cmp ( order = Value )
+| 100n         C1         
+| 10k          R1         
+| 10u          C2         
+| 12MHz        X1         
+| 22p          C3         
+| 22p          C4         
+| 2k2          R2         
+| 3.6V         D1         
+| 3.6V         D2         
+| 470          R3         
+| 470          R4         
+| 470          R5         
+| 4k7          R6         
+| 68           R7         
+| 68           R8         
+| CONN_2       P1         
+| JUMPER       JP4        
+| JUMPER       JP5        
+| JUMPER       JP6        
+| MEGA32-P     IC1        
+| PINHD-1X16M  JP1        
+| PINHD-1X3    JP11       
+| PINHD-1X3    JP12       
+| PINHD-1X4    JP10       
+| PINHD-1X4    JP13       
+| PINHD-1X4M   JP3        
+| PINHD-1X8M   JP2        
+| PINHD-2X5M   JP7        
+| USB          J1         
+#End Cmp
+
+#End List

@@ -1,0 +1,73 @@
+# Special targets:
+#
+#   fuses      program the fuses (doing this once should be enough)
+#   readfuses  read and display fuses
+#   flash      write program to the AVR, re-compile if necessary
+#
+#   flashboot  write boot loader to the AVR, re-compile if necessary
+#   lock       prevent write access to the boot loader section
+
+CC=$(AVRGCC) -mmcu=$(AVRTYPE)
+CCAS=$(CC)
+CCDEPMODE=depmode=gcc3
+CCASDEPMODE=$(CCASDEPMODE)
+CPP=$(CC) -E
+OBJCOPY=$(AVROBJCP)
+CFLAGS=-Os -pipe -std=c99 -Wall -Wshadow -Winline -Wcast-qual -Wcast-align -Wpointer-arith -Wsign-compare -Wwrite-strings -Waggregate-return -Winline -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs
+CCASFLAGS=$(CFLAGS)
+CPPFLAGS=-DF_CPU=$(AVRFREQ) -DDEBUG_LEVEL=0 -I$(VUSBDIR)/usbdrv
+LIBS=
+LDFLAGS=
+
+noinst_PROGRAMS=main boot
+
+main_CPPFLAGS=$(CPPFLAGS) -I$(COMMONSRC) -I$(COMMONOBJ)
+
+boot_SOURCES=$(BOOTDIR)/boot.c $(BOOTDIR)/bootloaderconfig.h bootloaderinit.h $(BOOTDIR)/usbconfig.h $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
+boot_CPPFLAGS=$(CPPFLAGS) -I$(BOOTDIR)
+boot_LDFLAGS=-Wl,--section-start=.text=$(BOOTLOADER_ADDRESS)
+
+all-local: main.hex boot.hex
+
+main.hex: main
+	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+
+boot.hex: boot
+	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+
+MATRIXFILES=keyboard.h keymapdecoder.h stdmap.h
+SOURCES=main.c $(MATRIXFILES)\
+ $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
+
+BUILT_SOURCES=matrixfiles.stamp
+CLEANFILES=matrixfiles.stamp $(MATRIXFILES) main.hex boot.hex
+
+matrixfiles.stamp: $(PROCMATRIX) $(MATRIXDEF)
+	rm -f $@
+	$(PROC) -k keyboard.h -c keymapdecoder.h -h stdmap.h
+	touch $@
+
+keyboard.h: matrixfiles.stamp
+keymapdecoder.h: matrixfiles.stamp
+stdmap.h: matrixfiles.stamp
+
+
+# Program fuse bits.
+fuses:
+	$(PROGFUSES)
+
+# Read fuses and print to stdout.
+readfuses:
+	$(PROGREADFUSES)
+
+# Lock the boot loader section.
+lock:
+	$(PROGLOCK)
+
+# Program the microcontroller, build hexfile if needed.
+flash: main.hex
+	$(PROG)
+
+# Program the microcontroller boot loader, build hexfile if needed.
+flashboot: boot.hex
+	$(PROG)

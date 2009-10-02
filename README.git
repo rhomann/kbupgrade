@@ -1,0 +1,15 @@
+If you checked out these sources from Github, then no configure script
+or Makefiles will be available.
+
+This is by intention!
+
+These file are generated and must never be checked into any version
+control system. To build a configure script, you'll need to install
+recent versions of GNU Autoconf and GNU Automake, preferably the
+latest stable versions available.
+
+Then, simply run
+
+$ autoreconf -i
+
+in order to build the configure script and various Makefile.in files.

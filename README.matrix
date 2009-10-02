@@ -1,0 +1,28 @@
+The matrix format consists of three blocks, separated from each others by empty
+lines. Comment lines start with a ``#'' character. Comments can be uses within
+a block, but there must be no empty line before or after the comment for the
+block not be interrupted.
+
+BLOCK 1 (header):
+The first block contains key/value pairs the define some properties of the
+defined matrix. Each line starts with the name of the key followed by white
+space followed by the value for that key.
+
+Valid keys are
+- "Device"  The name of the device.
+- "Swap"    Specify which columns or rows to swap to adapt the matrix to the
+            wiring on the PCB. For instance, use "Swap row 10,2..6 7..2" to
+            swap row 10 with 7, 2 with 6, 3 with 5, etc. The same works for
+            "Swap column".
+
+BLOCK 2 (matrix rows):
+The second block contains, on each line, the USB keycodes of the keys that
+share a row in the matrix. There will be as many lines in this block as there
+are rows in the keyboard matrix.
+
+BLOCK 3 (matrix columns):
+The third block contains the keycodes for the keys sharing a column in the
+matrix, similar to the second block.
+
+Note: Each keycode may appear only once in a matrix block. If some keycode
+appears in one matrix block, then it must also appear in the other.

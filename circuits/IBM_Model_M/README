@@ -1,0 +1,17 @@
+There are two alternative circuit designs for IBM Model M keyboards
+in this directory, suitable for various IBM models.
+
+One of the designs comes from the RUMP project by Chris Lee
+(see http://mg8.org/rump/), made with Eagle.
+The other one comes from the Dulcimer project by Ronald Schaten
+(see http://www.schatenseite.de/dulcimer.html), made with KiCad.
+
+
+Confirmed to work with the following keyboard models:
+
+Classic, clicky Model M
+- 1391401
+
+Model M Mini (Space Saver)
+- 1391472
+- 1392934
