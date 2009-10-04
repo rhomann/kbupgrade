@@ -4,7 +4,7 @@ MATRIXDEF=$(top_srcdir)/matrices/M4-1.matrix
 
 noinst_PROGRAMS=codectest
 codectest_SOURCES=codectest.c
-codectest_CPPFLAGS=-I$(COMMONSRC)
+codectest_CPPFLAGS=-I$(top_srcdir)/firmware/common
 
 EXTRA_DIST=procmatrix.py\
  bootloadHID.2008-11-26/Changelog.txt\

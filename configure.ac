@@ -148,17 +148,9 @@ AC_TYPE_UINT8_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset strerror strtol])
 
-COMMONSRC='$(top_srcdir)/firmware/common'
-COMMONOBJ='$(top_builddir)/firmware/common'
-BOOTDIR='$(top_srcdir)/firmware/bootloader'
-VUSBDIR='$(top_srcdir)/firmware/vusb'
-KEYCODES='$(COMMONSRC)/usbkeycodes.h'
+KEYCODES='$(top_srcdir)/firmware/common/usbkeycodes.h'
 PROCMATRIX='$(top_srcdir)/tools/procmatrix.py'
 PROC='$(PYTHON) $(PROCMATRIX) -d $(MATRIXDEF) -U $(KEYCODES)'
-AC_SUBST([COMMONSRC])
-AC_SUBST([COMMONOBJ])
-AC_SUBST([BOOTDIR])
-AC_SUBST([VUSBDIR])
 AC_SUBST([KEYCODES])
 AC_SUBST([PROCMATRIX])
 AC_SUBST([PROC])

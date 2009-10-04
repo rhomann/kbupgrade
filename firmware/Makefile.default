@@ -21,10 +21,13 @@ LDFLAGS=
 
 noinst_PROGRAMS=main boot
 
-main_CPPFLAGS=$(CPPFLAGS) -I$(COMMONSRC) -I$(COMMONOBJ)
+main_CPPFLAGS=$(CPPFLAGS) -I$(srcdir)/../common -I../common
 
-boot_SOURCES=$(BOOTDIR)/boot.c $(BOOTDIR)/bootloaderconfig.h bootloaderinit.h $(BOOTDIR)/usbconfig.h $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
-boot_CPPFLAGS=$(CPPFLAGS) -I$(BOOTDIR)
+BLDIR=$(srcdir)/../bootloader
+VUSBDIR=$(srcdir)/../vusb
+
+boot_SOURCES=$(BLDIR)/boot.c $(BLDIR)/bootloaderconfig.h bootloaderinit.h $(BLDIR)/usbconfig.h $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
+boot_CPPFLAGS=$(CPPFLAGS) -I$(BLDIR)
 boot_LDFLAGS=-Wl,--section-start=.text=$(BOOTLOADER_ADDRESS)
 
 all-local: main.hex boot.hex
