@@ -1,6 +1,6 @@
 WAREZ=firmware/1391401 firmware/1392934 firmware/M4-1
 
-SUBDIRS=tools firmware/common firmware/vusb $(WAREZ)
+SUBDIRS=tools matrices mappings firmware/common firmware/vusb $(WAREZ)
 
 CIRCUITS=\
  circuits/IBM_Model_M/dulcimer.erc\
@@ -21,4 +21,4 @@ CIRCUITS=\
  circuits/IBM_Model_M/dulcimer-SilkS_Cmp.pdf\
  circuits/IBM_Model_M/rump-schematic.png
 
-EXTRA_DIST=$(CIRCUITS) README.git README.matrix mappings matrices
+EXTRA_DIST=$(CIRCUITS) README.git README.matrix

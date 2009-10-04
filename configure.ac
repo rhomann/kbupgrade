@@ -170,6 +170,8 @@ AC_CONFIG_FILES([Makefile
                  firmware/common/Makefile
                  firmware/common/usbconfig.h
                  firmware/vusb/Makefile
+                 mappings/Makefile
+                 matrices/Makefile
                  tools/Makefile
                  tools/bootloadHID.2008-11-26/commandline/Makefile])
 AC_OUTPUT
