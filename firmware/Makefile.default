@@ -36,8 +36,7 @@ boot.hex: boot
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
 
 MATRIXFILES=keyboard.h keymapdecoder.h stdmap.h
-SOURCES=main.c $(MATRIXFILES)\
- $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
+SOURCES=main.c $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
 
 BUILT_SOURCES=matrixfiles.stamp
 CLEANFILES=matrixfiles.stamp $(MATRIXFILES) main.hex boot.hex

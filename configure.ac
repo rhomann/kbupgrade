@@ -151,7 +151,7 @@ AC_CHECK_FUNCS([memset strerror strtol])
 COMMONSRC='$(top_srcdir)/firmware/common'
 COMMONOBJ='$(top_builddir)/firmware/common'
 BOOTDIR='$(top_srcdir)/firmware/bootloader'
-VUSBDIR='$(top_srcdir)/firmware/vusb-20090822'
+VUSBDIR='$(top_srcdir)/firmware/vusb'
 KEYCODES='$(COMMONSRC)/usbkeycodes.h'
 PROCMATRIX='$(top_srcdir)/tools/procmatrix.py'
 PROC='$(PYTHON) $(PROCMATRIX) -d $(MATRIXDEF) -U $(KEYCODES)'
@@ -167,7 +167,9 @@ AC_CONFIG_FILES([Makefile
                  firmware/1391401/Makefile
                  firmware/1392934/Makefile
                  firmware/M4-1/Makefile
+                 firmware/common/Makefile
                  firmware/common/usbconfig.h
+                 firmware/vusb/Makefile
                  tools/Makefile
                  tools/bootloadHID.2008-11-26/commandline/Makefile])
 AC_OUTPUT

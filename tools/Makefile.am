@@ -3,8 +3,13 @@ SUBDIRS=bootloadHID.2008-11-26/commandline
 MATRIXDEF=$(top_srcdir)/matrices/M4-1.matrix
 
 noinst_PROGRAMS=codectest
-codectest_SOURCES=codectest.c keyboard.h stdstoredmap.h stdmap.h keymapdecoder.h
+codectest_SOURCES=codectest.c
 codectest_CPPFLAGS=-I$(COMMONSRC)
+
+EXTRA_DIST=procmatrix.py\
+ bootloadHID.2008-11-26/Changelog.txt\
+ bootloadHID.2008-11-26/License.txt\
+ bootloadHID.2008-11-26/Readme.txt
 
 BUILT_SOURCES=files.stamp
 
