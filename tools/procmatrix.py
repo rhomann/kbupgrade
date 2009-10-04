@@ -37,6 +37,7 @@ class GenOptions:
     this.progmem_prefix="prog_"
     this.keymap_name=None
     this.keymap_varname=Defaults.keymap_varname
+    this.matfile_permutations=True
 
 def error(line):
   sys.stderr.write('Error: '+line+'\n')
@@ -124,7 +125,7 @@ def expand_ranges(rangespec):
       for i in range(a,b+s,s): pins.append(i)
     else:
       error('Invalid range specification: "'+elem+'".')
-  if not pins: error('Empty or invalid swap specification: "'+rangespec+'".')
+  if not pins: error('Empty or invalid permutation: "'+rangespec+'".')
   return pins
 
 def add_swap_to_dict(dict,src,dest):
@@ -155,7 +156,8 @@ class KB:
     this.columns+=1
     this.max_name_length=128-this.num_of_keys()
 
-    # make swappings symmetric, adapt to 0-based indexing, check for errors
+  # make permutations symmetric, adapt to 0-based indexing, check for errors
+  def fix_permutations(this):
     if this.swap_rows_spec:
       temp={}
       for x in this.swap_rows_spec:
@@ -178,6 +180,7 @@ class KB:
       this.swap_cols_spec=temp
 
   def apply_swaps(this):
+    this.fix_permutations()
     if this.swap_rows_spec or this.swap_cols_spec:
       for key in this.keys.values():
         if key.row in this.swap_rows_spec: key.row=this.swap_rows_spec[key.row]
@@ -187,7 +190,7 @@ class KB:
 
   def set_remappings(this,remappings): this.remappings=remappings
 
-  def add_swap_rule(this,rule):
+  def add_swap_rule(this,rule,add_for_real):
     try:
       what,src,dest=re.split('\s+',rule,2)
     except ValueError as err:
@@ -202,7 +205,9 @@ class KB:
     elif what == 'column': dict=this.swap_cols_spec
     else:
       error('We can swap either a "row" or a "column", but not a "'+what+'".')
-    map(lambda x, y: add_swap_to_dict(dict,x,y), src_pins, dest_pins)
+
+    if add_for_real:
+      map(lambda x, y: add_swap_to_dict(dict,x,y), src_pins, dest_pins)
 
   def add_row(this): this.rows+=1
 
@@ -276,21 +281,22 @@ def skip_empty_lines(file,what):
     if line: return line
     elif line == None: return None
 
-def read_header(file,kbdef):
+def read_header(file,kbdef,options):
   line=skip_empty_lines(file,'header')
   while True:
     if not line: break
 
     line=re.split('\W+',line,1)
     if line[0] == 'Device': kbdef.set_name(line[1])
-    elif line[0] == 'Swap': kbdef.add_swap_rule(line[1])
+    elif line[0] == 'Swap': kbdef.add_swap_rule(line[1],
+                                                options.matfile_permutations)
     else: error('Unknown tag "'+line[0]+'"')
 
     line=read_strip_line(file,'header')
 
-def parse_matrix(file,valid_keycodes):
+def parse_matrix(file,valid_keycodes,options):
   kbdef=KB(file,valid_keycodes)
-  read_header(file,kbdef)
+  read_header(file,kbdef,options)
 
   # read rows
   line=skip_empty_lines(file,'matrix rows')
@@ -326,6 +332,12 @@ def parse_matrix(file,valid_keycodes):
 
   kbdef.finalize()
   return kbdef
+
+def parse_perm_file(file,kbdef):
+  for line in file:
+    line=line.lstrip().rstrip()
+    if not line or line[0] == '#': continue
+    kbdef.add_swap_rule(line,True)
 
 def show_matrix_layout(kbdef,simple):
   sparse_matrix=kbdef.get_sparse_matrix()
@@ -481,6 +493,8 @@ def usage():
 Read keyboard matrix definition, generate various files.
 Usage: """ + sys.argv[0] + """ -d <matrix definition file> [more options]
   -d file  Name of a file containing a keyboard matrix definition.
+  -U file  Read keycode names from enumeration stored in the given file
+           (default: \""""+Defaults.usbkeycode_file+"""\").
   -m file  Optional key re-mappings to be applied to the selected matrix in
            order to obtain a custom key map. This option can be given multiple
            times for cumulated effect.
@@ -495,18 +509,19 @@ Usage: """ + sys.argv[0] + """ -d <matrix definition file> [more options]
   -H file  Write C definition of the key map expanded as a matrix.
   -c file  Write bit vector that defines the keyboard matrix (used for mapping
            the stored key map to the keyboard's matrix layout).
-  -p       Put all generated definitions into RAM, and NOT into program memory
+  -P       Put all generated definitions into RAM, and NOT into program memory
            (for testing only).
   -s       Show keyboard matrix (just the connections).
   -S       Show keyboard matrix (including keycode names).
-  -U file  Read keycode names from enumeration file (default: \""""+Defaults.usbkeycode_file+"""\").
-  -x       Do not apply row and column swaps as defined in the matrix file.
+  -p file  Apply row and column permutations as specified in the given file.
+  -x       Do not apply row and column permutations as specified in the matrix
+           definition file.
 """)
   sys.exit(1)
 
 def main():
   try:
-    opts, args=getopt.getopt(sys.argv[1:],"c:d:h:H:k:m:n:N:psSU:x")
+    opts, args=getopt.getopt(sys.argv[1:],"c:d:h:H:k:m:n:N:p:PsSU:x")
   except getopt.GetoptError as err:
     print(err)
     usage()
@@ -519,17 +534,17 @@ def main():
   header_file_expanded=None
   decoder_header_file=None
   keyboard_header_file=None
+  permutation_file=None
   show_matrix=False
-  apply_swaps=True
   usbkeycode_file=Defaults.usbkeycode_file
   for o, a in opts:
     if o == "-d":
       matrix_def_file=a
     elif o == "-c":
       decoder_header_file=a
-    elif o == '-h':
+    elif o == "-h":
       header_file_stored=a
-    elif o == '-H':
+    elif o == "-H":
       header_file_expanded=a
     elif o == "-k":
       keyboard_header_file=a
@@ -540,20 +555,22 @@ def main():
     elif o == "-N":
       options.keymap_varname=a
     elif o == "-p":
+      permutation_file=a
+    elif o == "-P":
       options.progmem_attribute=""
       options.progmem_prefix=""
-    elif o == '-s':
+    elif o == "-s":
       show_matrix=True
       simple_matrix=True
-    elif o == '-S':
+    elif o == "-S":
       show_matrix=True
       simple_matrix=False
-    elif o == '-U':
+    elif o == "-U":
       usbkeycode_file=a
-    elif o == '-x':
-      apply_swaps=False
+    elif o == "-x":
+      options.matfile_permutations=False
     else:
-      assert False, "unhandled option"
+      assert False, "unhandled option "+o
 
   if not matrix_def_file: usage()
 
@@ -563,9 +580,13 @@ def main():
           " modifiers from \""+usbkeycode_file+"\".")
 
   with open(matrix_def_file) as matrix_file:
-    kbdef=parse_matrix(matrix_file,valid_keycodes)
-    if apply_swaps: kbdef.apply_swaps()
+    kbdef=parse_matrix(matrix_file,valid_keycodes,options)
     options.kbdef=kbdef
+
+  if permutation_file:
+    with open(permutation_file) as file: parse_perm_file(file,kbdef)
+
+  kbdef.apply_swaps()
 
   print(kbdef.name+": "+str(kbdef.num_of_codes())+" unique keycodes on "+
         str(kbdef.num_of_keys())+" keys in a "+str(kbdef.rows)+"x"+

@@ -12,7 +12,7 @@ CLEANFILES=files.stamp keyboard.h stdstoredmap.h stdmap.h keymapdecoder.h
 
 files.stamp: $(PROCMATRIX) $(MATRIXDEF)
 	rm -f $@
-	$(PROC) -k keyboard.h -h stdstoredmap.h -H stdmap.h -c keymapdecoder.h -N stored_map -p
+	$(PROC) -k keyboard.h -h stdstoredmap.h -H stdmap.h -c keymapdecoder.h -N stored_map -P
 	touch $@
 
 keyboard.h: files.stamp
