@@ -96,6 +96,8 @@ AC_ARG_VAR([PYTHON],[name of the Python interpreter])
 AC_CHECK_PROGS([PYTHON],[python python2.6 python3 python3.0])
 AS_IF([test -z "$PYTHON"],
       [ AC_MSG_ERROR([A Python installation is required to build the software (minimum version is 2.6). Please install and try again.]) ])
+AS_VERSION_COMPARE([`$PYTHON -V 2>&1 | cut -d ' ' -f 2-`],[2.6],
+  [ AC_MSG_ERROR([Your Python installation is too old, minimum required version is 2.6. Please install a recent version and try again.]) ])
 
 AC_CHECK_PROGS([AVRGCC],[avr-gcc])
 AC_CHECK_PROGS([AVROBJCP],[avr-objcopy])

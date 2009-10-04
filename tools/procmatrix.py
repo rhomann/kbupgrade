@@ -91,6 +91,8 @@ class Key:
     if this.row != other.row: return this.row-other.row
     return this.col-other.col
 
+  def compkey(this): return this.row*100+this.col
+
 def canonic_keycode_name(name):
   return name.rstrip('*')
 
@@ -207,7 +209,7 @@ class KB:
       error('We can swap either a "row" or a "column", but not a "'+what+'".')
 
     if add_for_real:
-      map(lambda x, y: add_swap_to_dict(dict,x,y), src_pins, dest_pins)
+      for x,y in zip(src_pins,dest_pins): add_swap_to_dict(dict,x,y)
 
   def add_row(this): this.rows+=1
 
@@ -249,7 +251,7 @@ class KB:
   def get_sparse_matrix(this):
     if not this.sparse_mat:
       # build the sparse matrix only once
-      this.sparse_mat=sorted(this.keys.values(),cmp=lambda x, y: x.compare(y))
+      this.sparse_mat=sorted(this.keys.values(),key=Key.compkey)
       for k in range(1,len(this.sparse_mat)):
         if this.sparse_mat[k-1].col == this.sparse_mat[k].col and this.sparse_mat[k-1].row == this.sparse_mat[k].row:
           error("Duplicate matrix assignment at row "+
@@ -369,7 +371,7 @@ def show_matrix_layout(kbdef,simple):
     sys.stdout.write("\n")
 
 def write_common_header(file,options):
-  guard=file.name.upper().translate(string.maketrans(".","_"))
+  guard=file.name.upper().replace(".","_")
   bvlen=int((options.kbdef.rows*options.kbdef.columns)/8)
   if bvlen*8 < options.kbdef.rows*options.kbdef.columns: bvlen+=1
   if options.kbdef.columns <= 8:
