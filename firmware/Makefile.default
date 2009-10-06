@@ -23,7 +23,7 @@ noinst_PROGRAMS=main boot
 
 main_CPPFLAGS=$(CPPFLAGS) -I$(srcdir)/../common -I../common
 
-BLDIR=$(srcdir)/../bootloader
+BLDIR=$(top_srcdir)/tools/bootloadHID.2008-11-26/firmware
 VUSBDIR=$(srcdir)/../vusb
 
 boot_SOURCES=$(BLDIR)/boot.c $(BLDIR)/bootloaderconfig.h bootloaderinit.h $(BLDIR)/usbconfig.h $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
