@@ -41,3 +41,4 @@
 #define LED_SCROLL_PIN  PIND4
 #define LED_CAPS_PIN    PIND5
 #define LED_NUM_PIN     PIND6
+#define LED_ALL_PINS    (_BV(PIND4)|_BV(PIND5)|_BV(PIND6))

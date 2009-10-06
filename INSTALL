@@ -58,11 +58,12 @@ But locking prevents the microcontroller to kill its own boot loader by
 accident, so it is generally a very good idea to do this.
 
 To flash the main firmware code to your keyboard, connect it to a USB port
-while holding down the key that is used to activate the boot loader. For
-instance, if you are using an IBM Model M, press ESC, keep it depressed, and
-plug the keyboard into your USB port. The LEDs will start flashing to indicate
-that the boot loader is activated, ready to receive a firmware image. You may
-release the ESC key now. Now, type (on a different keyboard)
+while holding down the key that is used to activate the boot loader (this is
+usually the Escape key). For instance, if you are using an IBM Model M, press
+ESC, keep it depressed, and plug the keyboard into your USB port. The LEDs will
+start flashing to indicate that the boot loader is activated, ready to receive
+a firmware image. You may release the ESC key now. Now, type (on a different
+keyboard)
 
 $ bootloadHID -r main.hex
 

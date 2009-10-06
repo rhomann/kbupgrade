@@ -24,8 +24,6 @@
 
 #include "pindefs.h"
 
-#define LED_ALL_PINS  (LED_SCROLL_PIN|LED_CAPS_PIN|LED_NUM_PIN)
-
 static void clock_data(void)
 {
   SHIFT_PORT|=SHIFT_CLOCK;
@@ -34,7 +32,8 @@ static void clock_data(void)
 }
 
 /*
- * activates on "U" key
+ * activates on Escape key
+ *
  */
 static inline void  bootLoaderInit(void)
 {
@@ -45,14 +44,16 @@ static inline void  bootLoaderInit(void)
   DDRB=_BV(DDB2)|_BV(DDB3)|_BV(DDB4);
   PORTB=~(SHIFT_CLOCK|_BV(PB2));
 
-  _delay_us(15);
+  /* shift a 0 to the row with the Escape key */
   for(int i=0; i < 16; ++i)
   {
+    if(i == 8) PORTB&=~SHIFT_DATA;
     _delay_us(5);
     clock_data();
+    if(i == 8) PORTB|=SHIFT_DATA;
   }
 
   _delay_us(20);
 }
 
-#define bootLoaderCondition()   ((PINC&_BV(PINC5)) == 0)
+#define bootLoaderCondition()   ((PINC&_BV(PINC7)) == 0)
