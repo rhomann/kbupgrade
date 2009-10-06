@@ -1,0 +1,18 @@
+This is the firmware for IBM M4-1 keyboards. It also works on the Unicomp
+versions, at least on those with a blue IBM logo (tested on a 84G2524 model
+from 1999).
+
+Suitable PCBs:
+- Circuit is included.
+
+Notes:
+- The circuit does not support the trackpoint yet, but is prepared to do so in
+  the future. For this reason, port A on the ATMEGA is not utilized since the
+  pins on this port can be configured as inputs for the ATMEGA's A/D
+  converters.
+- For an M4 (the one without the trackpoint) it should be possible to make a
+  specialized version that does not attempt to use the trackpoint and mouse
+  buttons. The circuit for that model would be a bit simpler since the pins
+  used for trackpoint axes and mouse buttons could be used for the keyboard
+  rows. This saves one shift register and 8 diodes (not much saved in terms of
+  money, but in terms of PCB space).

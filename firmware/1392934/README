@@ -1,0 +1,17 @@
+This is the firmware for IBM Model M Mini keyboards. It has been tested with a
+1391472 and a 1392934.
+
+Suitable PCBs:
+- RUMP by Chris Lee (see http://mg8.org/rump/)
+- Dulcimer by Ronald Schaten (see http://www.schatenseite.de/dulcimer.html)
+
+Notes:
+- Using this firmware instead of the version for the full-size version is
+  advantageous because (1) the keyboard layout is sparser than on the full-size
+  version, resulting in fewer chances for ghost keys; and (2) it gives you
+  three more free I/O pins on the microcontroller (pins 18, 19, and 20) because
+  there are no LEDs on the keyboard.
+- If you plan to add LEDs to your Space Saver, consider using the firmware for
+  the full-size version for a start. Adding LED support to the the version in
+  this directory, however, is trivial and can be implemented upon request.
+  Please contact the package author if you want this.

@@ -1,0 +1,12 @@
+This is the firmware for IBM Model M keyboards. It has been tested with a
+1391401, but may also work with other, similar IBM models.
+
+Suitable PCBs:
+- RUMP by Chris Lee (see http://mg8.org/rump/)
+- Dulcimer by Ronald Schaten (see http://www.schatenseite.de/dulcimer.html)
+
+Notes:
+- When using RUMP, you may want to add three resistors and a 4-pin connector
+  for the LEDs (see the Dulcimer PCB on how to connect).
+- If you have a Model M Mini (aka Space Saver), consider using the firmware in
+  the 1392934 directory instead.

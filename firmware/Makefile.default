@@ -44,6 +44,8 @@ SOURCES=main.c $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDI
 BUILT_SOURCES=matrixfiles.stamp
 CLEANFILES=matrixfiles.stamp $(MATRIXFILES) main.hex boot.hex
 
+EXTRA_DIST=README
+
 matrixfiles.stamp: $(PROCMATRIX) $(MATRIXDEF)
 	rm -f $@
 	$(PROC) -k keyboard.h -c keymapdecoder.h -h stdmap.h
