@@ -1,0 +1,26 @@
+This is a circuit design for an IBM M4-1 keyboard (made with KiCad).
+
+There are at least two different versions of the original PCB. Their dimensions
+are very similar, but otherwise they are quite different. The problem is that
+they have different connectors for attaching the keyboard matrix, LEDs, and
+mouse buttons to the board, so you need to check your keyboard before building
+the replacement PCB.
+
+One version has a 19-pin connector and a 9-pin connector for the keyboard
+matrix, plus a separate 4-pin connector for the LEDs, and another 4-pin
+connecter for connecting the mouse buttons (only three traces used). Such a PCB
+was found inside a 1379590 made by Lexmark (1994).
+
+The other version has a 22-pin connector and a 13-pin connector for the
+keyboard matrix. Three of the traces on the 22-pin connector are used for the
+two mouse buttons and their GND, and four traces on the 13-pin connector are
+used for the LEDs and their common GND (or +5V?). The PCB was found inside a
+84G2524 made by Unicomp (1999), which also had an unused 4-pin connector
+(mounted in the same place as the one for the mouse buttons on the Lexmark
+model).
+
+
+Confirmed to work with the following keyboard models:
+
+- 1379590 (Lexmark 1994)
+- 84G2524 (Unicomp 1999)

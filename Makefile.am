@@ -3,6 +3,11 @@ WAREZ=firmware/1391401 firmware/1392934 firmware/M4-1
 SUBDIRS=tools matrices mappings firmware/common firmware/vusb $(WAREZ)
 
 CIRCUITS=\
+ circuits/IBM_M4-1/74hc164.lib\
+ circuits/IBM_M4-1/README\
+ circuits/IBM_M4-1/pcb.pdf\
+ circuits/IBM_M4-1/pcb.pro\
+ circuits/IBM_M4-1/pcb.sch\
  circuits/IBM_Model_M/dulcimer.erc\
  circuits/IBM_Model_M/dulcimer.pro\
  circuits/IBM_Model_M/dulcimer-Component.pdf\
