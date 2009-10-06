@@ -158,7 +158,7 @@ class KB:
     this.columns+=1
     this.max_name_length=128-this.num_of_keys()
 
-  # make permutations symmetric, adapt to 0-based indexing, check for errors
+  # adapt to 0-based indexing, check for errors
   def fix_permutations(this):
     if this.swap_rows_spec:
       temp={}
@@ -168,7 +168,6 @@ class KB:
                 ', but swapping of row '+str(x)+' and '+
                 str(this.swap_rows_spec[x])+' specified.')
         temp[x-1]=this.swap_rows_spec[x]-1
-        temp[this.swap_rows_spec[x]-1]=x-1
       this.swap_rows_spec=temp
     if this.swap_cols_spec:
       temp={}
@@ -178,7 +177,6 @@ class KB:
                 ', but swapping of column '+str(x)+' and '+
                 str(this.swap_cols_spec[x])+' specified.')
         temp[x-1]=this.swap_cols_spec[x]-1
-        temp[this.swap_cols_spec[x]-1]=x-1
       this.swap_cols_spec=temp
 
   def apply_swaps(this):

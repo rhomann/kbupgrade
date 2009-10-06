@@ -22,21 +22,36 @@
 
 #include <util/delay.h>
 
-#define LED_ALL_PINS  (_BV(PIND4)|_BV(PIND5)|_BV(PIND6))
-#define LED_PORT      PORTD
-#define LED_DDR       DDRD
+#include "pindefs.h"
+
+#define LED_ALL_PINS  (LED_SCROLL_PIN|LED_CAPS_PIN|LED_NUM_PIN)
+
+static void clock_data(void)
+{
+  SHIFT_PORT|=SHIFT_CLOCK;
+  _delay_us(5);
+  SHIFT_PORT&=~SHIFT_CLOCK;
+}
 
 /*
- * activates on Right Control key
+ * activates on "U" key
  */
 static inline void  bootLoaderInit(void)
 {
-  PORTB=~_BV(PB0);
-  DDRB=_BV(DDB0);
-  PORTC=0xff;
   DDRC=0;
-  LED_PORT=LED_ALL_PINS;
+  PORTC=0xff;
   LED_DDR=LED_ALL_PINS;
+  LED_PORT=LED_ALL_PINS|_BV(PIND7);
+  DDRB=_BV(DDB2)|_BV(DDB3)|_BV(DDB4);
+  PORTB=~(SHIFT_CLOCK|_BV(PB2));
+
+  _delay_us(15);
+  for(int i=0; i < 16; ++i)
+  {
+    _delay_us(5);
+    clock_data();
+  }
+
   _delay_us(20);
 }
 

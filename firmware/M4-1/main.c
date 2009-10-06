@@ -28,26 +28,7 @@
 #include <avr/wdt.h>
 #include <util/delay.h>
 
-#define ROWS_PORT   PORTB
-#define ROWS_DDR    DDRB
-#define ROWS_ALL    (_BV(PB0)|_BV(PB1)|_BV(PB2))
-
-#define SHIFT_PORT  PORTB
-#define SHIFT_CLOCK _BV(PB3)
-#define SHIFT_DATA  _BV(PB4)
-
-#define COLS_PORT1  PORTC
-#define COLS_DDR1   DDRC
-#define COLS_PIN1   PINC
-
-#define COLS_PORT2  PORTD
-#define COLS_DDR2   DDRD
-#define COLS_PIN2   PIND
-
-#define LED_PORT        PORTD
-#define LED_SCROLL_PIN  PIND4
-#define LED_CAPS_PIN    PIND5
-#define LED_NUM_PIN     PIND6
+#include "pindefs.h"
 #include "leddefs.h"
 
 #define USB_SET_LED_STATE  set_led_state
@@ -69,6 +50,7 @@ static Columnstate column_states[NUM_OF_ROWS];
 static inline void clock_data(void)
 {
   SHIFT_PORT|=SHIFT_CLOCK;
+  _delay_us(5);
   SHIFT_PORT&=~SHIFT_CLOCK;
 }
 
@@ -88,13 +70,13 @@ static char update_column_states(void)
 
   for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
   {
-    if(row < 16)
+    /* move the 0 to the next pin of shift register */
+    clock_data();
+    if(row == 0)
     {
-      /* move the 0 to the next pin of shift register */
-      clock_data();
-      if(row == 0) SHIFT_PORT|=SHIFT_DATA;
+      SHIFT_PORT|=SHIFT_DATA;
     }
-    else
+    else if(row >= 16)
     {
       ROWS_DDR=(ROWS_DDR&~ROWS_ALL)|_BV(row&0x07);
       ROWS_PORT=(ROWS_PORT|ROWS_ALL)&~_BV(row&0x07);
@@ -141,7 +123,11 @@ static void setup(void)
 
   /* set all outputs of shift registers to 1 */
   SHIFT_PORT|=SHIFT_DATA;
-  for(int i=0; i < 16; ++i) clock_data();
+  for(int i=0; i < 16; ++i)
+  {
+    _delay_us(5);
+    clock_data();
+  }
 
   /* initialize USB stuff, force enumeration */
   usbInit();
