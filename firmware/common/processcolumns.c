@@ -20,6 +20,7 @@
  * MA  02110-1301  USA
  */
 
+#ifndef NO_GHOSTKEY_PREVENTION
 /*
  * This function may look rather expensive, but it is not as expensive as you
  * might think.
@@ -60,6 +61,7 @@ static uint8_t ghost_keys_present(void)
 
   return 0;
 }
+#endif /* !NO_GHOSTKEY_PREVENTION */
 
 /*
  * Update the usb_report_buffer using the column states stored in
@@ -67,10 +69,15 @@ static uint8_t ghost_keys_present(void)
  */
 static void process_columns(void)
 {
+#ifndef NO_GHOSTKEY_PREVENTION
   uint8_t ghosts=ghost_keys_present();
 
-  if(!ghosts) memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
+  if(!ghosts)
+#endif /* !NO_GHOSTKEY_PREVENTION */
+    memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
+#ifndef NO_GHOSTKEY_PREVENTION
   else usb_report_buffer.modifiers=0;
+#endif /* !NO_GHOSTKEY_PREVENTION */
 
   uint8_t num_of_keys=0;
   for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
@@ -86,7 +93,9 @@ static void process_columns(void)
       /* column got activated, and the key should not be ignored */
       if(key < NOKEY_Modifiers)
       {
+#ifndef NO_GHOSTKEY_PREVENTION
         if(ghosts) continue;
+#endif /* !NO_GHOSTKEY_PREVENTION */
         if(num_of_keys < 6) usb_report_buffer.keys[num_of_keys++]=key;
         else if(num_of_keys == 6)
         {

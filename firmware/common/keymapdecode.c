@@ -20,6 +20,12 @@
  * MA  02110-1301  USA
  */
 
+#ifdef NO_GHOSTKEY_PREVENTION
+#ifndef NO_ENHANCED_GKP
+#define NO_ENHANCED_GKP 1
+#endif /* !NO_ENHANCED_GKP */
+#endif /* NO_GHOSTKEY_PREVENTION */
+
 static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
 {
   memset(map,0,sizeof(Map));

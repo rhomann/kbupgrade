@@ -34,6 +34,12 @@
 #error Number of rows is greater than 16---Not implemented.
 #endif
 
+#ifdef NO_GHOSTKEY_PREVENTION
+#ifndef NO_ENHANCED_GKP
+#define NO_ENHANCED_GKP 1
+#endif /* !NO_ENHANCED_GKP */
+#endif /* NO_GHOSTKEY_PREVENTION */
+
 /*
  * Update global array column_states with values read from the I/O pins.
  */
@@ -72,7 +78,9 @@ static char update_column_states(void)
     _delay_us(30);
 
     Columnstate cols=COLS_PIN;
+#ifndef NO_ENHANCED_GKP
     cols|=column_valid_mask[row];
+#endif /* !NO_ENHANCED_GKP */
     if(column_states[row] != cols)
     {
       column_states[row]=cols;
