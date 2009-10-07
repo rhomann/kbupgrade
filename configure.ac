@@ -4,6 +4,12 @@ AM_INIT_AUTOMAKE([-Wall silent-rules foreign])
 AC_CONFIG_SRCDIR([firmware/1391401/main.c])
 AC_CONFIG_HEADERS([config.h])
 
+ku_warnings=''
+AC_DEFUN([KU_MSG_WARN],[
+  AC_MSG_WARN([$1])
+  ku_warnings="$ku_warnings- AS_ESCAPE([$1])\n"
+])
+
 AC_ARG_WITH([avr-type],
   [AS_HELP_STRING([--with-avr-type],
                   [compile firmware for selected AVR (atmega16 (default), atmega32)]) ],
@@ -83,6 +89,9 @@ AC_SUBST([USBVENDORLEN])
 AC_SUBST([USBDEVICE])
 AC_SUBST([USBDEVICELEN])
 
+build_firmwares=yes
+build_bootloadhid=yes
+
 # Checks for programs.
 AC_PROG_AWK
 AM_PROG_AS
@@ -94,28 +103,44 @@ AS_IF([test x"$ac_cv_prog_cc_c99" = xno],
 
 AC_ARG_VAR([PYTHON],[name of the Python interpreter])
 AC_CHECK_PROGS([PYTHON],[python python2.6 python3 python3.0])
-AS_IF([test -z "$PYTHON"],
-      [ AC_MSG_ERROR([A Python installation is required to build the software (minimum version is 2.6). Please install and try again.]) ])
-AS_VERSION_COMPARE([`$PYTHON -V 2>&1 | cut -d ' ' -f 2-`],[2.6],
-  [ AC_MSG_ERROR([Your Python installation is too old, minimum required version is 2.6. Please install a recent version and try again.]) ])
+AS_IF([test x"$PYTHON" = x],
+      [ KU_MSG_WARN([A Python installation is required to build the firmware, but none was found (minimum version is 2.6). If the interpreter is not in your PATH, then set the PYTHON environment variable.]) ],
+      [ AS_VERSION_COMPARE([`$PYTHON -V 2>&1 | cut -d ' ' -f 2-`],[2.6],
+          [ KU_MSG_WARN([Your Python installation is too old, minimum required version is 2.6 for building the firmware. You may try pointing at the correct Python interpreter using the PYTHON environment variable.])
+            PYTHON='' ])
+      ])
+AS_IF([test x"$PYTHON" = x],
+      [ PYTHON=false
+        build_firmwares=no
+      ])
 
+AC_ARG_VAR([AVRGCC],[name of the gcc for AVR cross compiler executable])
+AC_ARG_VAR([AVROBJCP],[name of the objcopy executable for AVR])
 AC_CHECK_PROGS([AVRGCC],[avr-gcc])
 AC_CHECK_PROGS([AVROBJCP],[avr-objcopy])
-AS_IF([test -z "$AVRGCC" || test -z "$AVROBJCP"],
-      [ AC_MSG_ERROR([Cross compiler for AVR not found or not installed correctly (package "gcc-avr" on Debian). Please install and try again.]) ])
+AS_IF([test x"$AVRGCC" = x || test x"$AVROBJCP" = x],
+      [ KU_MSG_WARN([gcc for AVR not found or not installed correctly (package "gcc-avr" on Debian). Please install and try again if you would like to be able to build the firmware images.])
+        AVRGCC=false
+        AVROBJCP=false
+        build_firmwares=no
+      ])
 
 AC_CHECK_PROGS([LIBUSBCFG],[libusb-config])
 AC_ARG_VAR([AVRDUDE],[name of the avrdude executable])
 AC_CHECK_PROGS([AVRDUDE],[avrdude])
 
-AS_IF([test x"$AVRDUDE" != x],
-      [ prog='$(PROGTOOL) -p $(AVRTYPE) -c $(AVRPROG)'
-        PROGTOOL="$AVRDUDE"
-        PROG="$prog"' -U flash:w:$<'
-        PROGLOCK="$prog"' -U lock:w:$(LOCKFUSE):m'
-        PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m'
-        PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2> /dev/null' ],
-      [ AC_MSG_WARN([Currently, only avrdude is supported for programming, but it was not found in the path. You may use the environment variable AVRDUDE to point at the binary. If you are using some other programming tool, you will have to use it manually for now.]) ])
+AS_IF([test x"$AVRDUDE" = x],
+      [ dnl Still set to avrdude just to get a useful command line
+        dnl for users of other tools.
+        AVRDUDE=avrdude
+        KU_MSG_WARN([Currently, only avrdude is supported for programming, but it was not found in your PATH. You may use the environment variable AVRDUDE to point at the binary. If you are using some other programming tool, you will have to use it manually for now. Try, e.g., "make && make -n fuses flashboot flash lock" inside some firmware subdirectory to get a clue on the command line to use (take a look at the last four lines).])
+      ])
+prog='$(PROGTOOL) -p $(AVRTYPE) -c $(AVRPROG)'
+PROGTOOL="$AVRDUDE"
+PROG="$prog"' -U flash:w:$<'
+PROGLOCK="$prog"' -U lock:w:$(LOCKFUSE):m'
+PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m'
+PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2> /dev/null'
 
 AC_SUBST([PROGTOOL])
 AC_SUBST([PROG])
@@ -124,13 +149,15 @@ AC_SUBST([PROGFUSES])
 AC_SUBST([PROGREADFUSES])
 
 # Checks for libraries.
-AS_IF([test x"${LIBUSBCFG}" = x],
+AS_IF([test x"$LIBUSBCFG" = x],
   [
     AC_CHECK_LIB([usb],[usb_init],,
-      [ AC_MSG_ERROR([Seems like libusb is not installed. Please install and try again (and don't forget the development files, too).])
+      [ KU_MSG_WARN([Seems like libusb is not installed. Please install and try again if you would like to be able to build the boot loader command line tool (and don't forget the development files, too).])
+        build_bootloadhid=no
       ])
     AC_CHECK_HEADER([usb.h],,
-      [ AC_MSG_ERROR([Seems like the development files for libusb are not installed (called, e.g., "libusb-dev" on Debian). Please install and try again.])
+      [ KU_MSG_WARN([Seems like the development files for libusb are not installed (called, e.g., "libusb-dev" on Debian). Please install and try again if you would like to be able to build the boot loader command line tool.])
+        build_bootloadhid=no
       ])
   ],
   [ CFLAGS="${CFLAGS} "`libusb-config --cflags`
@@ -157,6 +184,9 @@ AC_SUBST([KEYCODES])
 AC_SUBST([PROCMATRIX])
 AC_SUBST([PROC])
 
+AM_CONDITIONAL([CAN_BUILD_FIRMWARES],[test $build_firmwares = yes])
+AM_CONDITIONAL([CAN_BUILD_BOOTLOADHID],[test $build_bootloadhid = yes])
+
 AC_CONFIG_FILES([Makefile
                  firmware/1391401/Makefile
                  firmware/1392934/Makefile
@@ -170,7 +200,10 @@ AC_CONFIG_FILES([Makefile
                  tools/bootloadHID.2008-11-26/commandline/Makefile])
 AC_OUTPUT
 
-cat << END
+AS_IF([ test -n "$ku_warnings" ],
+      [ printf '\n***\n*** One or more problems were detected during configuration.\n*** This may mean that the firmware images cannot be built properly.\n***\nCollected warnings:\n'"$ku_warnings" ])
+
+cat <<END
 
 Configured for Atmel $AVRTYPE at $AVRFREQ Hz.
 Using $PROGTOOL for programming, type $AVRPROG.
