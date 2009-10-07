@@ -21,12 +21,18 @@
  */
 
 #ifndef DEBOUNCE_ITERATIONS
-#define DEBOUNCE_ITERATIONS  10
+#define DEBOUNCE_ITERATIONS  5
 #endif /* DEBOUNCE_ITERATIONS */
 
-#if DEBOUNCE_ITERATIONS <= 1 || DEBOUNCE_ITERATIONS > 255
-#error DEBOUNCE_ITERATIONS must be between 2 and 255.
+#if DEBOUNCE_ITERATIONS < 1 || DEBOUNCE_ITERATIONS > 255
+#error DEBOUNCE_ITERATIONS must be between 2 and 255 (1 to disable).
 #endif
+
+/* If the number of iterations is 1, then no software debouncing will be
+ * performed. Useful if the keys are debounced by hardware already. */
+#if DEBOUNCE_ITERATIONS == 1
+#undef DEBOUNCE_ITERATIONS
+#endif /* DEBOUNCE_ITERATIONS */
 
 static char update_column_states(void);
 static void process_columns(void);
@@ -38,20 +44,33 @@ static void process_columns(void);
  */
 static uint8_t scankeys(void)
 {
-  static uint8_t debounce=4;
+#if DEBOUNCE_ITERATIONS
+  static uint8_t debounce=2;
+#endif /* DEBOUNCE_ITERATIONS */
 
   if(update_column_states())
   {
     /* keyboard state changed, debouncing required */
+#if DEBOUNCE_ITERATIONS
     debounce=(DEBOUNCE_ITERATIONS)-1;
     return 0;
+#endif /* DEBOUNCE_ITERATIONS */
   }
+#ifndef DEBOUNCE_ITERATIONS
+  else
+  {
+    /* nothing changed */
+    return 0;
+  }
+#endif /* !DEBOUNCE_ITERATIONS */
 
+#if DEBOUNCE_ITERATIONS
   if(debounce == 0 || --debounce)
   {
     /* nothing changed or still debouncing */
     return 0;
   }
+#endif /* DEBOUNCE_ITERATIONS */
 
   /* so we need to construct a USB report... */
   process_columns();
