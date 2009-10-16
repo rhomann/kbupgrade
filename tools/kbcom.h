@@ -22,12 +22,12 @@
 
 #ifndef KBCOM_H
 #define KBCOM_H
-#include <usb.h>
+#include <libusb-1.0/libusb.h>
 
 typedef struct
 {
-  struct usb_device *dev;
-  usb_dev_handle *handle;
+  libusb_context *ctx;
+  libusb_device_handle *handle;
   int iface;
 } USBKeyboard;
 

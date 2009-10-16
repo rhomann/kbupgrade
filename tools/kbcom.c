@@ -30,50 +30,29 @@
 
 #include "kbcom.h"
 
-static int init_libusb(void)
+static const char *usberror_to_string(enum libusb_error err)
 {
-  usb_init();
-
-  if(usb_find_busses() <= 0)
+  switch(err)
   {
-    fprintf(stderr,"No USB busses found.\n");
-    return -1;
+   case LIBUSB_SUCCESS:             return "Success (no error).";
+   case LIBUSB_ERROR_IO:            return "Input/output error.";
+   case LIBUSB_ERROR_INVALID_PARAM: return "Invalid parameter.";
+   case LIBUSB_ERROR_ACCESS:        return "Access denied (insufficient permissions).";
+   case LIBUSB_ERROR_NO_DEVICE:     return "No such device (it may have been disconnected).";
+   case LIBUSB_ERROR_NOT_FOUND:     return "Entity not found.";
+   case LIBUSB_ERROR_BUSY:          return "Resource busy.";
+   case LIBUSB_ERROR_TIMEOUT:       return "Operation timed out.";
+   case LIBUSB_ERROR_OVERFLOW:      return "Overflow.";
+   case LIBUSB_ERROR_PIPE:          return "Pipe error.";
+   case LIBUSB_ERROR_INTERRUPTED:   return "System call interrupted (perhaps due to signal).";
+   case LIBUSB_ERROR_NO_MEM:        return "Insufficient memory.";
+   case LIBUSB_ERROR_NOT_SUPPORTED: return "Operation not supported or unimplemented on this platform.";
+   case LIBUSB_ERROR_OTHER:         return "Other error.";
+   default:                         return "Unknown error.";
   }
-
-  if(usb_find_devices() <= 0)
-  {
-    fprintf(stderr,"No USB devices found.\n");
-    return -1;
-  }
-
-  return 0;
 }
 
-static struct usb_device *find_keyboard_by_ids(void)
-{
-  struct usb_device *found_dev=NULL;
-
-  for(struct usb_bus *bus=usb_busses; bus != NULL; bus=bus->next)
-  {
-    for(struct usb_device *dev=bus->devices; dev != NULL; dev=dev->next)
-    {
-      if(dev->descriptor.idVendor != KBUPGRADE_VENDOR_ID ||
-         dev->descriptor.idProduct != KBUPGRADE_DEVICE_ID)
-        continue;
-
-      if(found_dev == NULL) found_dev=dev;
-      else
-      {
-        fprintf(stderr,"Found more than one matching device, cannot continue.\n");
-        return NULL;
-      }
-    }
-  }
-
-  if(found_dev == NULL) fprintf(stderr,"Found no matching device.\n");
-  return found_dev;
-}
-
+/*
 static int read_compare_dev_string(usb_dev_handle *dev, int idx,
                                    const char *expected, const char *what)
 {
@@ -85,7 +64,7 @@ static int read_compare_dev_string(usb_dev_handle *dev, int idx,
                           (USB_DT_STRING << 8)+idx,0x0409,
                           (char *)buffer,sizeof(buffer),1000)) < 0)
   {
-    fprintf(stderr,"Could not read %s from USB device.\n",what);
+    fprintf(stderr,"Could not read %s from USB device: %s\n",what,usb_strerror());
     return -1;
   }
 
@@ -116,7 +95,7 @@ static usb_dev_handle *open_keyboard_dev(struct usb_device *kb)
 
   if(dev == NULL)
   {
-    fprintf(stderr,"Could not open USB device: %s\n",usb_strerror());
+    fprintf(stderr,usberrorstring,usb_strerror());
     return NULL;
   }
 
@@ -133,53 +112,102 @@ static usb_dev_handle *open_keyboard_dev(struct usb_device *kb)
 
   return dev;
 }
+*/
 
 int kb_get_device(USBKeyboard *kb)
 {
-  if(init_libusb() == -1) return -1;
-
-  kb->dev=find_keyboard_by_ids();
-  kb->handle=open_keyboard_dev(kb->dev);
-  kb->iface=-1;
-
-  return (kb->handle != NULL)?0:-1;
-}
-
-int kb_claim_device(USBKeyboard *kb)
-{
-  if(usb_set_configuration(kb->handle,kb->dev->config->bConfigurationValue) != 0)
+  if(libusb_init(&kb->ctx) != 0)
   {
-    fprintf(stderr,"Could not set USB configuration: %s\n",usb_strerror());
-  }
-
-  kb->iface=kb->dev->config->interface->altsetting->bInterfaceNumber;
-
-#ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
-  if(usb_detach_kernel_driver_np(kb->handle,kb->iface) != 0)
-  {
-    fprintf(stderr,"Could not detach kernel driver from interface: %s\n",usb_strerror());
+    fprintf(stderr,"Could not initialize USB context.\n");
     return -1;
   }
-#endif /* LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP */
 
-  if(usb_claim_interface(kb->handle,
-                         kb->dev->config->interface->altsetting->bInterfaceNumber) != 0)
+  kb->iface=-1;
+
+  if((kb->handle=libusb_open_device_with_vid_pid(kb->ctx,KBUPGRADE_VENDOR_ID,
+                                                 KBUPGRADE_DEVICE_ID)) == NULL)
   {
-    fprintf(stderr,"Could not claim USB interface: %s.\n",usb_strerror());
+    fprintf(stderr,"No matching device found.\n");
+    libusb_exit(kb->ctx);
+    kb->ctx=NULL;
+    return -1;
   }
 
   return 0;
 }
 
-void kb_close_device(USBKeyboard *kb)
+int kb_claim_device(USBKeyboard *kb)
 {
-  if(kb->iface >= 0 && usb_release_interface(kb->handle,kb->iface) != 0)
+  int ret, conf;
+
+  if((ret=libusb_get_configuration(kb->handle,&conf)) != 0)
   {
-    fprintf(stderr,"Could not release USB interface: %s.\n",usb_strerror());
+    fprintf(stderr,"Could not get USB device configuration: %s\n",
+            usberror_to_string(ret));
+    return -1;
   }
 
-  if(kb->handle != NULL) usb_close(kb->handle);
-  kb->dev=NULL;
+  int iface=0;
+
+  if((ret=libusb_kernel_driver_active(kb->handle,iface)) == 1)
+  {
+    fprintf(stderr,"Kernel driver is active, detaching.\n");
+    if((ret=libusb_detach_kernel_driver(kb->handle,iface)) != 0)
+    {
+      fprintf(stderr,"Could not detach driver from USB interface: %s\n",
+              usberror_to_string(ret));
+      return -1;
+    }
+  }
+  else if(ret != 0)
+  {
+    fprintf(stderr,"Could not check if kernel driver is active: %s\n",
+            usberror_to_string(ret));
+    return -1;
+  }
+
+  if((ret=libusb_set_configuration(kb->handle,conf)) != 0)
+  {
+    fprintf(stderr,"Could not set USB device configuration: %s\n",
+            usberror_to_string(ret));
+    return -1;
+  }
+
+  if((ret=libusb_claim_interface(kb->handle,iface)) != 0)
+  {
+    fprintf(stderr,"Could not claim USB interface: %s\n",
+            usberror_to_string(ret));
+    return -1;
+  }
+
+  kb->iface=iface;
+  return 0;
+}
+
+void kb_close_device(USBKeyboard *kb)
+{
+  if(kb->handle != NULL)
+  {
+    int ret;
+    if(kb->iface != -1)
+    {
+      if((ret=libusb_release_interface(kb->handle,kb->iface)) != 0)
+      {
+        fprintf(stderr,"Could not release USB interface: %s\n",
+                usberror_to_string(ret));
+      }
+      if((ret=libusb_attach_kernel_driver(kb->handle,kb->iface)) != 0)
+      {
+        fprintf(stderr,"Could not attach to kernel driver: %s\n",
+                usberror_to_string(ret));
+      }
+    }
+    libusb_close(kb->handle);
+  }
+
+  if(kb->ctx != NULL) libusb_exit(kb->ctx);
+
+  kb->ctx=NULL;
   kb->handle=NULL;
   kb->iface=-1;
 }

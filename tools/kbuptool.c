@@ -29,6 +29,12 @@
 
 #include "kbcom.h"
 
+static int do_stuff(USBKeyboard *kb)
+{
+  /* do useful things here */
+  return 0;
+}
+
 int main(int argc, char *argv[])
 {
   USBKeyboard kb;
@@ -37,7 +43,7 @@ int main(int argc, char *argv[])
   if(kb_get_device(&kb) == -1) return EXIT_FAILURE;
   if(kb_claim_device(&kb) == 0)
   {
-    ret=EXIT_SUCCESS;
+    if(do_stuff(&kb) == 0) ret=EXIT_SUCCESS;
   }
 
   kb_close_device(&kb);
