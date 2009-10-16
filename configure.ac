@@ -78,16 +78,30 @@ AC_SUBST([LOFUSE])
 AC_SUBST([HIFUSE])
 AC_SUBST([LOCKFUSE])
 
-USBVENDOR=`echo "Robert Homann $PACKAGE_BUGREPORT" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
-USBVENDORLEN=`echo "Robert Homann $PACKAGE_BUGREPORT" | wc -c`
+USBVENDORSTR='Robert Homann '"$PACKAGE_BUGREPORT"
+USBDEVICESTR="$PACKAGE_STRING"
+
+USBVENDOR=`echo "$USBVENDORSTR" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
+USBVENDORLEN=`echo "USBVENDORSTR" | wc -c`
 USBVENDORLEN=`expr $USBVENDORLEN - 1`
-USBDEVICE=`echo "$PACKAGE_STRING" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
-USBDEVICELEN=`echo "$PACKAGE_STRING" | wc -c`
+USBDEVICE=`echo "$USBDEVICESTR" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
+USBDEVICELEN=`echo "$USBDEVICESTR" | wc -c`
 USBDEVICELEN=`expr $USBDEVICELEN - 1`
 AC_SUBST([USBVENDOR])
 AC_SUBST([USBVENDORLEN])
 AC_SUBST([USBDEVICE])
 AC_SUBST([USBDEVICELEN])
+
+# 0x16c0 = 5824 = voti.nl
+USBVENDORID='0xc0, 0x16'
+# 0x05dc = 1500
+USBDEVICEID='0xdc, 0x05'
+AC_SUBST([USBVENDORID])
+AC_SUBST([USBDEVICEID])
+AC_DEFINE([KBUPGRADE_VENDOR_ID],[((uint16_t)0x16c0)],[Vendor ID of keyboards equipped with Keyboard Upgrade.])
+AC_DEFINE([KBUPGRADE_DEVICE_ID],[((uint16_t)0x05dc)],[Device ID of keyboards equipped with Keyboard Upgrade.])
+AC_DEFINE_UNQUOTED([KBUPGRADE_VENDOR_NAME],["$USBVENDORSTR"],[Vendor name of keyboards equipped with Keyboard Upgrade.])
+AC_DEFINE_UNQUOTED([KBUPGRADE_DEVICE_NAME],["$USBDEVICESTR"],[Device name of keyboards equipped with Keyboard Upgrade.])
 
 build_firmwares=yes
 build_bootloadhid=yes
