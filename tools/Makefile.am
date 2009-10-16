@@ -1,5 +1,9 @@
 if CAN_BUILD_BOOTLOADHID
 SUBDIRS=bootloadHID.2008-11-26/commandline
+
+bin_PROGRAMS=kbuptool
+
+kbuptool_SOURCES=kbuptool.c kbcom.c kbcom.h
 endif
 
 MATRIXDEF=$(top_srcdir)/matrices/M4-1.matrix
