@@ -7,9 +7,9 @@ SUBDIRS=tools matrices mappings firmware/common firmware/vusb $(WAREZ)
 CIRCUITS=\
  circuits/IBM_M4-1/74hc164.lib\
  circuits/IBM_M4-1/README\
- circuits/IBM_M4-1/pcb.pdf\
- circuits/IBM_M4-1/pcb.pro\
- circuits/IBM_M4-1/pcb.sch\
+ circuits/IBM_M4-1/schematic.pdf\
+ circuits/IBM_M4-1/schematic.pro\
+ circuits/IBM_M4-1/schematic.sch\
  circuits/IBM_Model_M/dulcimer.erc\
  circuits/IBM_Model_M/dulcimer.pro\
  circuits/IBM_Model_M/dulcimer-Component.pdf\

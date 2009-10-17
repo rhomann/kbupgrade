@@ -2,8 +2,8 @@ update=24/9/2009-23:50:23
 last_client=eeschema
 [general]
 version=1
-RootSch=pcb.sch
-BoardNm=pcb.brd
+RootSch=schematic.sch
+BoardNm=schematic.brd
 [eeschema]
 version=1
 LibDir=
