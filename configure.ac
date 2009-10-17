@@ -82,7 +82,7 @@ USBVENDORSTR='Robert Homann '"$PACKAGE_BUGREPORT"
 USBDEVICESTR="$PACKAGE_STRING"
 
 USBVENDOR=`echo "$USBVENDORSTR" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
-USBVENDORLEN=`echo "USBVENDORSTR" | wc -c`
+USBVENDORLEN=`echo "$USBVENDORSTR" | wc -c`
 USBVENDORLEN=`expr $USBVENDORLEN - 1`
 USBDEVICE=`echo "$USBDEVICESTR" | sed 's/\(.\)/'\''\1'\'',/g' | sed 's/,$//'`
 USBDEVICELEN=`echo "$USBDEVICESTR" | wc -c`
