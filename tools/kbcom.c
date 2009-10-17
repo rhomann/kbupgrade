@@ -123,6 +123,7 @@ int kb_get_device(USBKeyboard *kb)
   }
 
   kb->iface=-1;
+  kb->was_attached=0;
 
   if((kb->handle=libusb_open_device_with_vid_pid(kb->ctx,KBUPGRADE_VENDOR_ID,
                                                  KBUPGRADE_DEVICE_ID)) == NULL)
@@ -151,13 +152,14 @@ int kb_claim_device(USBKeyboard *kb)
 
   if((ret=libusb_kernel_driver_active(kb->handle,iface)) == 1)
   {
-    fprintf(stderr,"Kernel driver is active, detaching.\n");
+    /* fprintf(stderr,"Kernel driver is active, detaching.\n"); */
     if((ret=libusb_detach_kernel_driver(kb->handle,iface)) != 0)
     {
       fprintf(stderr,"Could not detach driver from USB interface: %s\n",
               usberror_to_string(ret));
       return -1;
     }
+    kb->was_attached=1;
   }
   else if(ret != 0)
   {
@@ -196,9 +198,10 @@ void kb_close_device(USBKeyboard *kb)
         fprintf(stderr,"Could not release USB interface: %s\n",
                 usberror_to_string(ret));
       }
-      if((ret=libusb_attach_kernel_driver(kb->handle,kb->iface)) != 0)
+      if(kb->was_attached &&
+         (ret=libusb_attach_kernel_driver(kb->handle,kb->iface)) != 0)
       {
-        fprintf(stderr,"Could not attach to kernel driver: %s\n",
+        fprintf(stderr,"Could not re-attach to kernel driver: %s\n",
                 usberror_to_string(ret));
       }
     }

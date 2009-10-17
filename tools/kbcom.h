@@ -29,6 +29,7 @@ typedef struct
   libusb_context *ctx;
   libusb_device_handle *handle;
   int iface;
+  int was_attached;
 } USBKeyboard;
 
 int kb_get_device(USBKeyboard *kb);
