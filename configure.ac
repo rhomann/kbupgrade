@@ -190,7 +190,7 @@ AC_CHECK_LIB([usb-1.0],[libusb_init],,
     build_kbuptool=no
   ])
 AC_CHECK_HEADER([libusb-1.0/libusb.h],,
-  [ KU_MSG_WARN([Seems like the development files for libusb 1.0.x are not installed (called, e.g., "libusb-1.0.0-dev" on Debian). Please install and try again if you would like to be able to build the Keyboard Upgrade command line tool.])
+  [ KU_MSG_WARN([Seems like the development files for libusb 1.0.x are not installed (called, e.g., "libusb-1.0-0-dev" on Debian). Please install and try again if you would like to be able to build the Keyboard Upgrade command line tool.])
     build_kbuptool=no
   ])
 AS_IF([test $build_kbuptool = yes],[ LIBUSB1LIBS='-lusb-1.0' ])
