@@ -148,7 +148,7 @@ class KB:
     this.remappings=None
     this.sparse_mat=None
     this.valid_keycodes=valid_keycodes
-    this.max_name_length=0
+    this.max_name_length=20
     this.swap_rows_spec={}
     this.swap_cols_spec={}
 
@@ -156,7 +156,6 @@ class KB:
     this.check()
     this.rows+=1
     this.columns+=1
-    this.max_name_length=128-this.num_of_keys()
 
   # adapt to 0-based indexing, check for errors
   def fix_permutations(this):
@@ -387,6 +386,7 @@ def write_common_header(file,options):
 #define NUM_OF_ROWS           """+str(options.kbdef.rows)+"""
 #define NUM_OF_COLUMNS        """+str(options.kbdef.columns)+"""
 #define MATRIX_BITVECTOR_LEN  """+str(bvlen)+"""
+#define KEYMAP_NAME_LENGTH    """+str(options.kbdef.max_name_length)+"""
 
 #define COLUMNSTATE_EMPTY     """+colstateempty+"""
 
@@ -397,7 +397,7 @@ typedef struct
 
 typedef struct
 {
-  const char name[128-NUM_OF_KEYS];
+  const char name[KEYMAP_NAME_LENGTH];
   uint8_t codes[NUM_OF_KEYS];
 } Storedmap;
 
