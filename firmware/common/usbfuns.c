@@ -22,7 +22,10 @@
  * MA  02110-1301  USA
  */
 
+#include <avr/eeprom.h>
+
 #include "usbdrv.h"
+#include "usbrequests.h"
 
 char PROGMEM usbHidReportDescriptor[USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH]=
 {
@@ -72,12 +75,54 @@ static uchar usb_protocol_ver_buffer;
 static uchar usb_idle_rate;
 static uchar usb_expect_report;
 
+static const uint8_t *copy_data_ptr;
+static uint8_t        copy_data_len;
+
+static usbMsgLen_t handle_request(const usbRequest_t *rq)
+{
+  static uint8_t buffer[8];
+
+  usbMsgPtr=(void *)buffer;
+  switch(rq->bRequest)
+  {
+   case KURQ_GET_HWINFO:
+    ((KBHwinfo *)buffer)->max_mapindex=MAXIMUM_KEYMAP_INDEX;
+    ((KBHwinfo *)buffer)->current_mapindex=0;
+    ((KBHwinfo *)buffer)->num_of_keys=NUM_OF_KEYS;
+    ((KBHwinfo *)buffer)->num_of_rows=NUM_OF_ROWS;
+    ((KBHwinfo *)buffer)->num_of_cols=NUM_OF_COLUMNS;
+    ((KBHwinfo *)buffer)->matrix_bvlen=MATRIX_BITVECTOR_LEN;
+    return sizeof(KBHwinfo);
+   case KURQ_GET_KEYMAP:
+    if(rq->wValue.bytes[0] == 0)
+    {
+      usb_expect_report=KURQ_GET_DATA_FROM_PGM;
+      copy_data_ptr=(const uint8_t *)&standard_stored_keymap;
+    }
+    else if(rq->wValue.bytes[0] <= MAXIMUM_KEYMAP_INDEX)
+    {
+      usb_expect_report=KURQ_GET_DATA_FROM_EEPROM;
+      copy_data_ptr=(const uint8_t *)0+(rq->wValue.bytes[0]-1)*sizeof(Storedmap);
+    }
+    else return 0;
+    copy_data_len=sizeof(Storedmap);
+    return USB_NO_MSG;
+   default:
+    return 0;
+  }
+}
+
 usbMsgLen_t usbFunctionSetup(uchar data[8])
 {
   usbRequest_t *rq=(void *)data;
   usbMsgPtr=(void *)&usb_report_buffer;
 
-  if((rq->bmRequestType&USBRQ_TYPE_MASK) != USBRQ_TYPE_CLASS) return 0;
+  if((rq->bmRequestType&USBRQ_TYPE_MASK) != USBRQ_TYPE_CLASS)
+  {
+    if((rq->bmRequestType&USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR)
+      return handle_request(rq);
+    return 0;
+  }
 
   switch(rq->bRequest)
   {
@@ -92,7 +137,7 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
    case USBRQ_HID_SET_REPORT:
     if(rq->wLength.word == 1)
     {
-      usb_expect_report=1;
+      usb_expect_report=USBRQ_HID_SET_REPORT;
       return USB_NO_MSG;
     }
     return 0;
@@ -109,14 +154,43 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
 uchar usbFunctionWrite(uchar *data, uchar len)
 {
+  uchar ret=0;
+
 #ifdef USB_SET_LED_STATE
-  if((usb_expect_report) && (len == 1))
+  if(usb_expect_report == USBRQ_HID_SET_REPORT)
   {
     USB_SET_LED_STATE(data[0]);
+    ret=1;
   }
 #endif /* USB_SET_LED_STATE */
   usb_expect_report=0;
-  return 1;
+  return ret;
+}
+
+uchar usbFunctionRead(uchar *data, uchar len)
+{
+  uchar ret=0;
+
+  switch(usb_expect_report)
+  {
+   case KURQ_GET_DATA_FROM_PGM:
+   case KURQ_GET_DATA_FROM_EEPROM:
+    if(copy_data_len < len) ret=copy_data_len;
+    else                    ret=len;
+    if(usb_expect_report == KURQ_GET_DATA_FROM_PGM)
+      memcpy_P(data,copy_data_ptr,ret);
+    else
+      eeprom_read_block(data,copy_data_ptr,ret);
+    copy_data_ptr+=ret;
+    copy_data_len-=ret;
+    if(copy_data_len > 0) return ret;
+    break;
+   default:
+    break;
+  }
+
+  usb_expect_report=0;
+  return ret;
 }
 
 #ifdef USB_SET_LED_STATE

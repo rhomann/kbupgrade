@@ -38,12 +38,14 @@
 #define COLS_DDR    DDRB
 #define COLS_PIN    PINB
 
-#include "usbfuns.c"
+#define MAXIMUM_KEYMAP_INDEX  3
 
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"
 #include "keymapdecoder.h"
+
+#include "usbfuns.c"
 
 static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];

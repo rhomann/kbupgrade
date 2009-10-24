@@ -44,13 +44,15 @@
 #define LED_NUM_PIN     PIND6
 #include "leddefs.h"
 
-#define USB_SET_LED_STATE  set_led_state
-#include "usbfuns.c"
+#define MAXIMUM_KEYMAP_INDEX  3
 
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"
 #include "keymapdecoder.h"
+
+#define USB_SET_LED_STATE  set_led_state
+#include "usbfuns.c"
 
 static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];

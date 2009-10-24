@@ -28,9 +28,11 @@ typedef struct
 {
   libusb_context *ctx;
   libusb_device_handle *handle;
-  int iface;
+  int iface, conf;
   int was_attached;
 } USBKeyboard;
+
+const char *usberror_to_string(enum libusb_error err);
 
 int kb_get_device(USBKeyboard *kb);
 int kb_claim_device(USBKeyboard *kb);

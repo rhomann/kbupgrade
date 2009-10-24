@@ -30,7 +30,10 @@
 
 #include "kbcom.h"
 
-static const char *usberror_to_string(enum libusb_error err)
+#define KBDEVCONFIG 1
+#define KBDEVIFACE  0
+
+const char *usberror_to_string(enum libusb_error err)
 {
   switch(err)
   {
@@ -139,21 +142,19 @@ int kb_get_device(USBKeyboard *kb)
 
 int kb_claim_device(USBKeyboard *kb)
 {
-  int ret, conf;
+  int ret;
 
-  if((ret=libusb_get_configuration(kb->handle,&conf)) != 0)
+  if((ret=libusb_get_configuration(kb->handle,&kb->conf)) != 0)
   {
     fprintf(stderr,"Could not get USB device configuration: %s\n",
             usberror_to_string(ret));
     return -1;
   }
 
-  int iface=0;
-
-  if((ret=libusb_kernel_driver_active(kb->handle,iface)) == 1)
+  if((ret=libusb_kernel_driver_active(kb->handle,KBDEVIFACE)) == 1)
   {
     /* fprintf(stderr,"Kernel driver is active, detaching.\n"); */
-    if((ret=libusb_detach_kernel_driver(kb->handle,iface)) != 0)
+    if((ret=libusb_detach_kernel_driver(kb->handle,KBDEVIFACE)) != 0)
     {
       fprintf(stderr,"Could not detach driver from USB interface: %s\n",
               usberror_to_string(ret));
@@ -168,21 +169,21 @@ int kb_claim_device(USBKeyboard *kb)
     return -1;
   }
 
-  if((ret=libusb_set_configuration(kb->handle,conf)) != 0)
+  if((ret=libusb_set_configuration(kb->handle,KBDEVCONFIG)) != 0)
   {
     fprintf(stderr,"Could not set USB device configuration: %s\n",
             usberror_to_string(ret));
     return -1;
   }
 
-  if((ret=libusb_claim_interface(kb->handle,iface)) != 0)
+  if((ret=libusb_claim_interface(kb->handle,KBDEVIFACE)) != 0)
   {
     fprintf(stderr,"Could not claim USB interface: %s\n",
             usberror_to_string(ret));
     return -1;
   }
 
-  kb->iface=iface;
+  kb->iface=KBDEVIFACE;
   return 0;
 }
 
@@ -196,6 +197,11 @@ void kb_close_device(USBKeyboard *kb)
       if((ret=libusb_release_interface(kb->handle,kb->iface)) != 0)
       {
         fprintf(stderr,"Could not release USB interface: %s\n",
+                usberror_to_string(ret));
+      }
+      if((ret=libusb_set_configuration(kb->handle,kb->conf)) != 0)
+      {
+        fprintf(stderr,"Could not set USB device configuration: %s\n",
                 usberror_to_string(ret));
       }
       if(kb->was_attached &&
