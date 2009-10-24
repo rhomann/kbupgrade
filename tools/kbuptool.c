@@ -48,10 +48,24 @@ static inline int receive_buffer(USBKeyboard *kb, KURequest req,
                                  void *buffer, uint16_t bufsize)
 {
   int ret=libusb_control_transfer(kb->handle,REQ_IN,(uint8_t)req,val,idx,
-                                  (unsigned char *)buffer,bufsize,1000);
+                                  (unsigned char *)buffer,bufsize,5000);
   if(ret < 0)
   {
-    fprintf(stderr,"Could not send buffer to USB device: %s\n",
+    fprintf(stderr,"Could not send buffer to USB device (input request): %s\n",
+            usberror_to_string(ret));
+  }
+  return ret;
+}
+
+static inline int send_buffer(USBKeyboard *kb, KURequest req,
+                              uint16_t val, uint16_t idx,
+                              void *buffer, uint16_t bufsize)
+{
+  int ret=libusb_control_transfer(kb->handle,REQ_OUT,(uint8_t)req,val,idx,
+                                  (unsigned char *)buffer,bufsize,5000);
+  if(ret < 0)
+  {
+    fprintf(stderr,"Could not send buffer to USB device (output request): %s\n",
             usberror_to_string(ret));
   }
   return ret;
@@ -60,8 +74,7 @@ static inline int receive_buffer(USBKeyboard *kb, KURequest req,
 static int get_keymap(USBKeyboard *kb, uint8_t mapindex,
                       uint8_t *buffer, uint8_t mapsize)
 {
-  int ret=receive_buffer(kb,KURQ_GET_KEYMAP,libusb_cpu_to_le16(mapindex),0,
-                         buffer,mapsize);
+  int ret=receive_buffer(kb,KURQ_GET_KEYMAP,mapindex,0,buffer,mapsize);
 
   if(ret < 0)
   {
@@ -72,6 +85,35 @@ static int get_keymap(USBKeyboard *kb, uint8_t mapindex,
   if(ret != mapsize)
   {
     fprintf(stderr,"Received unexpected number of bytes (%d instead of %d)\n",
+            ret,mapsize);
+    return -1;
+  }
+
+  return 0;
+}
+
+static int set_keymap(USBKeyboard *kb, uint8_t mapindex,
+                      uint8_t *buffer, uint8_t mapsize, int just_delete)
+{
+  uint16_t value=mapindex;
+
+  if(just_delete)
+  {
+    value|=0x0100;
+    mapsize=0;
+  }
+
+  int ret=send_buffer(kb,KURQ_SET_KEYMAP,value,0,buffer,mapsize);
+
+  if(ret < 0)
+  {
+    fprintf(stderr,"Error while writing key map (index %d).\n",mapindex);
+    return -1;
+  }
+
+  if(ret != mapsize)
+  {
+    fprintf(stderr,"Written unexpected number of bytes (%d instead of %d)\n",
             ret,mapsize);
     return -1;
   }
@@ -118,8 +160,7 @@ static int show_status(USBKeyboard *kb, const KBHwinfo *info)
   return 0;
 }
 
-static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
-                           const char *outfilename, int mapindex)
+static int check_mapindex(const KBHwinfo *info, int mapindex)
 {
   if(mapindex < 0 || mapindex > info->max_mapindex)
   {
@@ -127,9 +168,19 @@ static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
             info->max_mapindex);
     return -1;
   }
+  return 0;
+}
+
+static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
+                           const char *outfilename, int mapindex)
+{
+  if(check_mapindex(info,mapindex) != 0) return -1;
 
   uint8_t keymap[KEYMAP_NAME_LENGTH+info->num_of_keys];
   if(get_keymap(kb,mapindex,keymap,sizeof(keymap)) != 0) return -1;
+
+  if(keymap[0] == '\0' || keymap[0] == 0xff)
+    fprintf(stderr,"Warning: key map data belongs to deleted entry.\n");
 
   FILE *out=fopen(outfilename,"w");
   if(out == NULL)
@@ -148,11 +199,74 @@ static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
   return ret;
 }
 
+static int read_keymap_from_file(const char *infilename,
+                                 uint8_t *buffer, int bufsize)
+{
+  FILE *in=fopen(infilename,"r");
+  int ret=-1;
+  long size=0;
+
+  if(in != NULL)
+  {
+    if(fseek(in,0L,SEEK_END) == 0 && (size=ftell(in)) != -1)
+    {
+      if(bufsize == size)
+      {
+        rewind(in);
+
+        if(fread(buffer,bufsize,1,in) == 1) ret=0;
+        else perror("fwrite()");
+      }
+      else
+      {
+        fprintf(stderr,"Invalid file size, expecting file of size %d\n",
+                bufsize);
+      }
+    }
+    else
+    {
+      if(size == 0) perror("fseek()");
+      else          perror("ftell()");
+    }
+    fclose(in);
+  }
+  else perror("fopen()");
+
+  return ret;
+}
+
+static int upload_keymap(USBKeyboard *kb, const KBHwinfo *info,
+                         const char *infilename, int mapindex)
+{
+  if(check_mapindex(info,mapindex) != 0) return -1;
+
+  uint8_t keymap[KEYMAP_NAME_LENGTH+info->num_of_keys];
+  if(read_keymap_from_file(infilename,
+                           keymap,KEYMAP_NAME_LENGTH+info->num_of_keys) == -1)
+    return -1;
+
+  if(keymap[0] == '\0' || keymap[0] == 0xff)
+  {
+    fprintf(stderr,"Key map data invalid.\n");
+    return -1;
+  }
+
+  return set_keymap(kb,mapindex,keymap,sizeof(keymap),0);
+}
+
+static int delete_keymap(USBKeyboard *kb, const KBHwinfo *info, int mapindex)
+{
+  if(check_mapindex(info,mapindex) != 0) return -1;
+  return set_keymap(kb,mapindex,NULL,0,1);
+}
+
 static void usage(const char *progname)
 {
   fprintf(stderr,
-          "Usage: %s [-g filename index]\n"
-          "-g  Get key map stored at given index.\n",
+          "Usage: %s [-g filename index] [-k filename index] [-d index]\n"
+          "-g  Get key map stored at given index.\n"
+          "-k  Write key map at given index.\n"
+          "-d  Delete key map at given index.\n",
           progname);
 }
 
@@ -168,18 +282,22 @@ int main(int argc, char *argv[])
      receive_buffer(&kb,KURQ_GET_HWINFO,0,0,
                     &info,sizeof(KBHwinfo)) == sizeof(KBHwinfo))
   {
-    /* lame command line handling */
+    /* lame command line handling, should use getopt() */
     int temp=-1;
     if(argc == 1)
     {
       temp=show_status(&kb,&info);
     }
-    else if(argc == 4)
+    else
     {
-      if(strcmp(argv[1],"-g") == 0)
+      if(argc == 4 && strcmp(argv[1],"-g") == 0)
         temp=download_keymap(&kb,&info,argv[2],atoi(argv[3]));
+      else if(argc == 4 && strcmp(argv[1],"-k") == 0)
+        temp=upload_keymap(&kb,&info,argv[2],atoi(argv[3]));
+      else if (argc == 3 && strcmp(argv[1],"-d") == 0)
+        temp=delete_keymap(&kb,&info,atoi(argv[2]));
+      else usage(argv[0]);
     }
-    else usage(argv[0]);
 
     if(temp == 0) ret=EXIT_SUCCESS;
   }

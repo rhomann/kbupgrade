@@ -31,11 +31,11 @@ typedef enum
   KURQ_GET_LAYOUT,  /* Get keyboard layout. */
   KURQ_GET_KEYMAP,  /* Get selected key map (0=default, other from EEPROM). */
   KURQ_SET_KEYMAP,  /* Set key map (write to EEPROM). */
-  KURQ_DEL_KEYMAP,  /* Delete key map, free its slot. */
 
   /* internal requests */
   KURQ_GET_DATA_FROM_PGM,
-  KURQ_GET_DATA_FROM_EEPROM
+  KURQ_GET_DATA_FROM_EEPROM,
+  KURQ_WRITE_DATA_TO_EEPROM
 } KURequest;
 
 /* The structure returned by KURQ_GET_HWINFO, not larger than 8 bytes. */

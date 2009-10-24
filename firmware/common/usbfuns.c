@@ -75,6 +75,8 @@ static uchar usb_protocol_ver_buffer;
 static uchar usb_idle_rate;
 static uchar usb_expect_report;
 
+#define KEYMAP_POINTER_FROM_INDEX(I)  ((uint8_t *)0+(((I)-1)*sizeof(Storedmap)))
+
 static const uint8_t *copy_data_ptr;
 static uint8_t        copy_data_len;
 
@@ -93,20 +95,45 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
     ((KBHwinfo *)buffer)->num_of_cols=NUM_OF_COLUMNS;
     ((KBHwinfo *)buffer)->matrix_bvlen=MATRIX_BITVECTOR_LEN;
     return sizeof(KBHwinfo);
+   case KURQ_GET_LAYOUT:
+    usb_expect_report=KURQ_GET_DATA_FROM_PGM;
+    copy_data_ptr=matrix_bits;
+    copy_data_len=MATRIX_BITVECTOR_LEN;
+    return USB_NO_MSG;
    case KURQ_GET_KEYMAP:
     if(rq->wValue.bytes[0] == 0)
     {
+      /* read default key map from flash memory */
       usb_expect_report=KURQ_GET_DATA_FROM_PGM;
       copy_data_ptr=(const uint8_t *)&standard_stored_keymap;
     }
     else if(rq->wValue.bytes[0] <= MAXIMUM_KEYMAP_INDEX)
     {
+      /* read user-defined key map from EEPROM */
       usb_expect_report=KURQ_GET_DATA_FROM_EEPROM;
-      copy_data_ptr=(const uint8_t *)0+(rq->wValue.bytes[0]-1)*sizeof(Storedmap);
+      copy_data_ptr=KEYMAP_POINTER_FROM_INDEX(rq->wValue.bytes[0]);
     }
     else return 0;
     copy_data_len=sizeof(Storedmap);
     return USB_NO_MSG;
+   case KURQ_SET_KEYMAP:
+    if(rq->wValue.bytes[0] == 0 || rq->wValue.bytes[0] > MAXIMUM_KEYMAP_INDEX)
+      return 0;
+    uint8_t *loc=KEYMAP_POINTER_FROM_INDEX(rq->wValue.bytes[0]);
+    if(rq->wValue.bytes[1] == 0)
+    {
+      /* write data sent by host */
+      usb_expect_report=KURQ_WRITE_DATA_TO_EEPROM;
+      copy_data_ptr=loc;
+      copy_data_len=sizeof(Storedmap);
+      return USB_NO_MSG;
+    }
+    else
+    {
+      /* just delete the entry */
+      eeprom_write_byte(loc,0xff);
+      return 0;
+    }
    default:
     return 0;
   }
@@ -156,13 +183,24 @@ uchar usbFunctionWrite(uchar *data, uchar len)
 {
   uchar ret=0;
 
-#ifdef USB_SET_LED_STATE
-  if(usb_expect_report == USBRQ_HID_SET_REPORT)
+  switch(usb_expect_report)
   {
+#ifdef USB_SET_LED_STATE
+   case USBRQ_HID_SET_REPORT:
     USB_SET_LED_STATE(data[0]);
     ret=1;
-  }
+    break;
 #endif /* USB_SET_LED_STATE */
+   case KURQ_WRITE_DATA_TO_EEPROM:
+    if(copy_data_len < len) ret=copy_data_len;
+    else                    ret=len;
+    eeprom_write_block(data,(uint8_t *)copy_data_ptr,ret);
+    copy_data_ptr+=ret;
+    copy_data_len-=ret;
+    if(copy_data_len > 0) return ret;
+    break;
+  }
+
   usb_expect_report=0;
   return ret;
 }
