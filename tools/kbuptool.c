@@ -171,6 +171,27 @@ static int check_mapindex(const KBHwinfo *info, int mapindex)
   return 0;
 }
 
+static int write_blob_to_file(const char *outfilename,
+                              const uint8_t *data, size_t size)
+{
+  FILE *out=fopen(outfilename,"w");
+
+  if(out == NULL)
+  {
+    perror("fopen()");
+    return -1;
+  }
+
+  int ret=0;
+  if(fwrite(data,size,1,out) != 1)
+  {
+    perror("fwrite()");
+    ret=-1;
+  }
+  fclose(out);
+  return ret;
+}
+
 static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
                            const char *outfilename, int mapindex)
 {
@@ -182,21 +203,29 @@ static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
   if(keymap[0] == '\0' || keymap[0] == 0xff)
     fprintf(stderr,"Warning: key map data belongs to deleted entry.\n");
 
-  FILE *out=fopen(outfilename,"w");
-  if(out == NULL)
+  return write_blob_to_file(outfilename,keymap,sizeof(keymap));
+}
+
+static int download_layout(USBKeyboard *kb, const KBHwinfo *info,
+                           const char *outfilename)
+{
+  uint8_t vector[info->matrix_bvlen];
+  int ret=receive_buffer(kb,KURQ_GET_LAYOUT,0,0,vector,info->matrix_bvlen);
+
+  if(ret < 0)
   {
-    perror("fopen()");
+    fprintf(stderr,"Error while reading keyboard layout.\n");
     return -1;
   }
 
-  int ret=0;
-  if(fwrite(keymap,sizeof(keymap),1,out) != 1)
+  if(ret != info->matrix_bvlen)
   {
-    perror("fwrite()");
-    ret=-1;
+    fprintf(stderr,"Received unexpected number of bytes (%d instead of %d)\n",
+            ret,info->matrix_bvlen);
+    return -1;
   }
-  fclose(out);
-  return ret;
+
+  return write_blob_to_file(outfilename,vector,sizeof(vector));
 }
 
 static int read_keymap_from_file(const char *infilename,
@@ -215,7 +244,7 @@ static int read_keymap_from_file(const char *infilename,
         rewind(in);
 
         if(fread(buffer,bufsize,1,in) == 1) ret=0;
-        else perror("fwrite()");
+        else perror("fread()");
       }
       else
       {
@@ -263,11 +292,17 @@ static int delete_keymap(USBKeyboard *kb, const KBHwinfo *info, int mapindex)
 static void usage(const char *progname)
 {
   fprintf(stderr,
-          "Usage: %s [-g filename index] [-k filename index] [-d index]\n"
-          "-g  Get key map stored at given index.\n"
+          "Usage: %s -l filename\n"
+          "       %s -g filename index\n"
+          "       %s -k filename index\n"
+          "       %s -d index\n"
+          "\nOptions:\n"
+          "-l  Get keyboard layout, write to file.\n"
+          "-g  Get key map stored at given index, write to file.\n"
           "-k  Write key map at given index.\n"
-          "-d  Delete key map at given index.\n",
-          progname);
+          "-d  Delete key map at given index.\n"
+          "No option: print basic hardware information and all key maps.\n",
+          progname,progname,progname,progname);
 }
 
 int main(int argc, char *argv[])
@@ -290,7 +325,9 @@ int main(int argc, char *argv[])
     }
     else
     {
-      if(argc == 4 && strcmp(argv[1],"-g") == 0)
+      if(argc == 3 && strcmp(argv[1],"-l") == 0)
+        temp=download_layout(&kb,&info,argv[2]);
+      else if(argc == 4 && strcmp(argv[1],"-g") == 0)
         temp=download_keymap(&kb,&info,argv[2],atoi(argv[3]));
       else if(argc == 4 && strcmp(argv[1],"-k") == 0)
         temp=upload_keymap(&kb,&info,argv[2],atoi(argv[3]));
