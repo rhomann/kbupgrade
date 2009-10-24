@@ -160,12 +160,12 @@ static int show_status(USBKeyboard *kb, const KBHwinfo *info)
   return 0;
 }
 
-static int check_mapindex(const KBHwinfo *info, int mapindex)
+static int check_mapindex(const KBHwinfo *info, uint8_t min, int mapindex)
 {
-  if(mapindex < 0 || mapindex > info->max_mapindex)
+  if(mapindex < min || mapindex > info->max_mapindex)
   {
-    fprintf(stderr,"Invalid index, must be in range 0...%hhu\n",
-            info->max_mapindex);
+    fprintf(stderr,"Invalid index, must be in range %hhu...%hhu\n",
+            min,info->max_mapindex);
     return -1;
   }
   return 0;
@@ -195,7 +195,7 @@ static int write_blob_to_file(const char *outfilename,
 static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
                            const char *outfilename, int mapindex)
 {
-  if(check_mapindex(info,mapindex) != 0) return -1;
+  if(check_mapindex(info,0,mapindex) != 0) return -1;
 
   uint8_t keymap[KEYMAP_NAME_LENGTH+info->num_of_keys];
   if(get_keymap(kb,mapindex,keymap,sizeof(keymap)) != 0) return -1;
@@ -267,7 +267,7 @@ static int read_keymap_from_file(const char *infilename,
 static int upload_keymap(USBKeyboard *kb, const KBHwinfo *info,
                          const char *infilename, int mapindex)
 {
-  if(check_mapindex(info,mapindex) != 0) return -1;
+  if(check_mapindex(info,1,mapindex) != 0) return -1;
 
   uint8_t keymap[KEYMAP_NAME_LENGTH+info->num_of_keys];
   if(read_keymap_from_file(infilename,
@@ -285,7 +285,7 @@ static int upload_keymap(USBKeyboard *kb, const KBHwinfo *info,
 
 static int delete_keymap(USBKeyboard *kb, const KBHwinfo *info, int mapindex)
 {
-  if(check_mapindex(info,mapindex) != 0) return -1;
+  if(check_mapindex(info,1,mapindex) != 0) return -1;
   return set_keymap(kb,mapindex,NULL,0,1);
 }
 
