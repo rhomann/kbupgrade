@@ -77,8 +77,15 @@ static uchar usb_expect_report;
 
 #define KEYMAP_POINTER_FROM_INDEX(I)  ((uint8_t *)0+(((I)-1)*sizeof(Storedmap)))
 
-static const uint8_t *copy_data_ptr;
-static uint8_t        copy_data_len;
+/* This union is used to work around warnings that are thrown when casting
+ * const pointers to non-const. */
+static union
+{
+  const uint8_t *constptr;
+  uint8_t *ptr;
+} copy_data_ptr;
+
+static uint8_t copy_data_len;
 
 static usbMsgLen_t handle_request(const usbRequest_t *rq)
 {
@@ -97,7 +104,7 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
     return sizeof(KBHwinfo);
    case KURQ_GET_LAYOUT:
     usb_expect_report=KURQ_GET_DATA_FROM_PGM;
-    copy_data_ptr=matrix_bits;
+    copy_data_ptr.constptr=matrix_bits;
     copy_data_len=MATRIX_BITVECTOR_LEN;
     return USB_NO_MSG;
    case KURQ_GET_KEYMAP:
@@ -105,13 +112,13 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
     {
       /* read default key map from flash memory */
       usb_expect_report=KURQ_GET_DATA_FROM_PGM;
-      copy_data_ptr=(const uint8_t *)&standard_stored_keymap;
+      copy_data_ptr.constptr=(const uint8_t *)&standard_stored_keymap;
     }
     else if(rq->wValue.bytes[0] <= MAXIMUM_KEYMAP_INDEX)
     {
       /* read user-defined key map from EEPROM */
       usb_expect_report=KURQ_GET_DATA_FROM_EEPROM;
-      copy_data_ptr=KEYMAP_POINTER_FROM_INDEX(rq->wValue.bytes[0]);
+      copy_data_ptr.constptr=KEYMAP_POINTER_FROM_INDEX(rq->wValue.bytes[0]);
     }
     else return 0;
     copy_data_len=sizeof(Storedmap);
@@ -124,7 +131,7 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
     {
       /* write data sent by host */
       usb_expect_report=KURQ_WRITE_DATA_TO_EEPROM;
-      copy_data_ptr=loc;
+      copy_data_ptr.ptr=loc;
       copy_data_len=sizeof(Storedmap);
       return USB_NO_MSG;
     }
@@ -194,8 +201,8 @@ uchar usbFunctionWrite(uchar *data, uchar len)
    case KURQ_WRITE_DATA_TO_EEPROM:
     if(copy_data_len < len) ret=copy_data_len;
     else                    ret=len;
-    eeprom_write_block(data,(uint8_t *)copy_data_ptr,ret);
-    copy_data_ptr+=ret;
+    eeprom_write_block(data,copy_data_ptr.ptr,ret);
+    copy_data_ptr.ptr+=ret;
     copy_data_len-=ret;
     if(copy_data_len > 0) return ret;
     break;
@@ -216,10 +223,10 @@ uchar usbFunctionRead(uchar *data, uchar len)
     if(copy_data_len < len) ret=copy_data_len;
     else                    ret=len;
     if(usb_expect_report == KURQ_GET_DATA_FROM_PGM)
-      memcpy_P(data,copy_data_ptr,ret);
+      memcpy_P(data,copy_data_ptr.constptr,ret);
     else
-      eeprom_read_block(data,copy_data_ptr,ret);
-    copy_data_ptr+=ret;
+      eeprom_read_block(data,copy_data_ptr.constptr,ret);
+    copy_data_ptr.constptr+=ret;
     copy_data_len-=ret;
     if(copy_data_len > 0) return ret;
     break;
