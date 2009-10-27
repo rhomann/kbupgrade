@@ -81,7 +81,7 @@ static void setup(void)
   usbDeviceDisconnect();
   wdt_reset();
 
-  set_current_keymap();
+  set_current_keymap(get_keymap_config());
 
   _delay_ms(400);
 

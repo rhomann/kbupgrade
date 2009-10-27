@@ -20,6 +20,8 @@
  * MA  02110-1301  USA
  */
 
+#include "commandmode.h"
+
 #ifndef NO_GHOSTKEY_PREVENTION
 /*
  * This function may look rather expensive, but it is not as expensive as you
@@ -67,7 +69,7 @@ static uint8_t ghost_keys_present(void)
  * Update the usb_report_buffer using the column states stored in
  * column_states. This function also avoids ghost key constellations.
  */
-static void process_columns(void)
+static Mode process_columns(void)
 {
 #ifndef NO_GHOSTKEY_PREVENTION
   uint8_t ghosts=ghost_keys_present();
@@ -96,11 +98,20 @@ static void process_columns(void)
 #ifndef NO_GHOSTKEY_PREVENTION
         if(ghosts) continue;
 #endif /* !NO_GHOSTKEY_PREVENTION */
-        if(num_of_keys < 6) usb_report_buffer.keys[num_of_keys++]=key;
-        else if(num_of_keys == 6)
+        if(key != KEY_scrlck)
         {
-          memset(usb_report_buffer.keys,KEY_errorRollOver,6);
-          ++num_of_keys;
+          if(num_of_keys < 6) usb_report_buffer.keys[num_of_keys++]=key;
+          else if(num_of_keys == 6)
+          {
+            memset(usb_report_buffer.keys,KEY_errorRollOver,6);
+            ++num_of_keys;
+          }
+        }
+        else
+        {
+          /* command key pressed, enter command mode */
+          memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
+          return MODE_ENTER_COMMAND;
         }
       }
       else
@@ -109,4 +120,6 @@ static void process_columns(void)
       }
     }
   }
+
+  return MODE_NORMAL;
 }

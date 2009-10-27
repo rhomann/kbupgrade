@@ -96,7 +96,7 @@ static void setup(void)
   _delay_ms(50);
   set_led_state(0);
 
-  set_current_keymap();
+  set_current_keymap(get_keymap_config());
 
   _delay_ms(100);
   set_led_state(LED_SCROLL);

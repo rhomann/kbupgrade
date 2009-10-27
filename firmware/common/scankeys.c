@@ -35,7 +35,35 @@
 #endif /* DEBOUNCE_ITERATIONS */
 
 static char update_column_states(void);
-static void process_columns(void);
+static Mode process_columns(void);
+
+static char wait_no_keys(void)
+{
+  for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
+  {
+    if(column_states[row] != COLUMNSTATE_EMPTY) return 0;
+  }
+  return 1;
+}
+
+static uint8_t get_command_key(void)
+{
+  for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
+  {
+    Columnstate state=column_states[row];
+    if(state == COLUMNSTATE_EMPTY) continue;
+
+    for(uint8_t col=0; col < NUM_OF_COLUMNS; ++col, state>>=1)
+    {
+      uint8_t key;
+      if((state&1) || (key=current_keymap.mat[row][col]) == 0) continue;
+      return key;
+    }
+  }
+  return KEY__;
+}
+
+#include "commandmode.c"
 
 /*
  * Standard scankey() function. It calls the function for updating the column
@@ -72,7 +100,48 @@ static uint8_t scankeys(void)
   }
 #endif /* DEBOUNCE_ITERATIONS */
 
-  /* so we need to construct a USB report... */
-  process_columns();
-  return 1;
+  static Mode mode;
+#ifdef LED_ONOFF
+  static char scrlck_led_state;
+#endif /* LED_ONOFF */
+
+  switch(mode)
+  {
+   case MODE_NORMAL:
+    if((mode=process_columns()) == MODE_NORMAL)
+    {
+      /* so we need to construct a USB report... */
+      return 1;
+    }
+    break;
+   case MODE_ENTER_COMMAND:
+   case MODE_LEAVE_COMMAND:
+    /* wait until no key is pressed for a smooth transition between normal and
+     * command mode */
+    if(wait_no_keys())
+    {
+      if(mode == MODE_ENTER_COMMAND)
+      {
+        mode=MODE_COMMAND;
+#ifdef LED_ONOFF
+        scrlck_led_state=LED_PORT&LED_SCROLL;
+        LED_ONOFF(SCROLL,~scrlck_led_state);
+#endif /* LED_ONOFF */
+      }
+      else
+      {
+        mode=MODE_NORMAL;
+#ifdef LED_ONOFF
+        LED_ONOFF(SCROLL,scrlck_led_state);
+#endif /* LED_ONOFF */
+      }
+    }
+    break;
+   case MODE_COMMAND:
+    process_command(get_command_key());
+    mode=MODE_LEAVE_COMMAND;
+    break;
+  }
+
+  return 0;
 }

@@ -44,8 +44,8 @@
 #endif /* LED_KANA_PIN */
 
 #define LED_ONOFF(WHICH,STATE)\
-  if(state&(LED_##WHICH)) (LED_PORT)&=~_BV(LED_##WHICH##_PIN);\
-  else                    (LED_PORT)|=_BV(LED_##WHICH##_PIN)
+  if((STATE)&(LED_##WHICH)) (LED_PORT)&=~_BV(LED_##WHICH##_PIN);\
+  else                      (LED_PORT)|=_BV(LED_##WHICH##_PIN)
 
 static void set_led_state(uint8_t state)
 {
