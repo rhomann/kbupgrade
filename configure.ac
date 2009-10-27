@@ -105,6 +105,7 @@ AC_DEFINE_UNQUOTED([KBUPGRADE_DEVICE_NAME],["$USBDEVICESTR"],[Device name of key
 
 build_firmwares=yes
 build_bootloadhid=yes
+build_kbuptool=yes
 
 # Checks for programs.
 AC_PROG_AWK
@@ -165,18 +166,39 @@ AC_SUBST([PROGREADFUSES])
 # Checks for libraries.
 AS_IF([test x"$LIBUSBCFG" = x],
   [
-    AC_CHECK_LIB([usb],[usb_init],,
-      [ KU_MSG_WARN([Seems like libusb is not installed. Please install and try again if you would like to be able to build the boot loader command line tool (and don't forget the development files, too).])
+    save_LIBS="$LIBS"
+    AC_CHECK_LIB([usb],[usb_find_busses],,
+      [ KU_MSG_WARN([Seems like libusb 0.1.x is not installed. Please install and try again if you would like to be able to build the boot loader command line tool (and don't forget the development files, too).])
         build_bootloadhid=no
       ])
     AC_CHECK_HEADER([usb.h],,
-      [ KU_MSG_WARN([Seems like the development files for libusb are not installed (called, e.g., "libusb-dev" on Debian). Please install and try again if you would like to be able to build the boot loader command line tool.])
+      [ KU_MSG_WARN([Seems like the development files for libusb 0.1.x are not installed (called, e.g., "libusb-dev" on Debian). Please install and try again if you would like to be able to build the boot loader command line tool.])
         build_bootloadhid=no
       ])
+    AS_IF([test $build_bootloadhid = yes],
+          [ LIBUSB0CFLAGS=''
+            LIBUSB0LIBS='-lusb' ])
+    LIBS="$save_LIBS"
   ],
-  [ CFLAGS="${CFLAGS} "`libusb-config --cflags`
-    LIBS="${LIBS} "`libusb-config --libs` ]
+  [ LIBUSB0CFLAGS="`libusb-config --cflags`"
+    LIBUSB0LIBS="`libusb-config --libs`" ]
 )
+
+save_LIBS="$LIBS"
+AC_CHECK_LIB([usb-1.0],[libusb_init],,
+  [ KU_MSG_WARN([Seems like libusb 1.0.x is not installed. Please install and try again if you would like to be able to build the Keyboard Upgrade command line tool (and don't forget the development files, too).])
+    build_kbuptool=no
+  ])
+AC_CHECK_HEADER([libusb-1.0/libusb.h],,
+  [ KU_MSG_WARN([Seems like the development files for libusb 1.0.x are not installed (called, e.g., "libusb-1.0-0-dev" on Debian). Please install and try again if you would like to be able to build the Keyboard Upgrade command line tool.])
+    build_kbuptool=no
+  ])
+AS_IF([test $build_kbuptool = yes],[ LIBUSB1LIBS='-lusb-1.0' ])
+LIBS="$save_LIBS"
+
+AC_SUBST([LIBUSB0CFLAGS])
+AC_SUBST([LIBUSB0LIBS])
+AC_SUBST([LIBUSB1LIBS])
 
 # Checks for header files.
 AC_CHECK_HEADERS([inttypes.h stdlib.h string.h])
@@ -200,6 +222,7 @@ AC_SUBST([PROC])
 
 AM_CONDITIONAL([CAN_BUILD_FIRMWARES],[test $build_firmwares = yes])
 AM_CONDITIONAL([CAN_BUILD_BOOTLOADHID],[test $build_bootloadhid = yes])
+AM_CONDITIONAL([CAN_BUILD_KBUPTOOL],[test $build_kbuptool = yes])
 
 AC_CONFIG_FILES([Makefile
                  firmware/1391401/Makefile

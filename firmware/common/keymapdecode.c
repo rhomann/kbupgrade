@@ -20,14 +20,23 @@
  * MA  02110-1301  USA
  */
 
+#ifdef __AVR_ARCH__
+#include "eeprom.h"
+#endif /* __AVR_ARCH__ */
+
 #ifdef NO_GHOSTKEY_PREVENTION
 #ifndef NO_ENHANCED_GKP
 #define NO_ENHANCED_GKP 1
 #endif /* !NO_ENHANCED_GKP */
 #endif /* NO_GHOSTKEY_PREVENTION */
 
-static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
+static void decode(Map *map, const uint8_t *src, uint8_t from_eeprom)
 {
+#ifndef __AVR_ARCH__
+#define pgm_read_byte(PTR)     (*(PTR))
+#define eeprom_read_byte(PTR)  (*(PTR))
+#endif /* !__AVR_ARCH__ */
+
   memset(map,0,sizeof(Map));
 
 #ifndef NO_ENHANCED_GKP
@@ -35,14 +44,8 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
 #endif /* !NO_ENHANCED_GKP */
 
   int keys_left=NUM_OF_KEYS;
-#ifdef __AVR_ARCH__
-  const prog_uint8_t *ptr=matrix_bits;
-#else /* !__AVR_ARCH__ */
-  const uint8_t *ptr=matrix_bits;
-#define pgm_read_byte(PTR) (*(PTR))
-#endif /* __AVR_ARCH__ */
-
   uint8_t mask=0x80;
+  const uint8_t *ptr=matrix_bits;
   uint8_t bits=pgm_read_byte(ptr);
 
 #ifndef NO_ENHANCED_GKP
@@ -54,7 +57,9 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
   {
     if(bits&mask)
     {
-      *dest=*src++;
+      if(from_eeprom) *dest=eeprom_read_byte(src);
+      else            *dest=pgm_read_byte(src);
+      ++src;
 #ifdef ZERO_CODES_ARE_TRASH_CODES
       if(*dest == 0) *dest=KEY_trash;
 #endif /* ZERO_CODES_ARE_TRASH_CODES */
@@ -85,12 +90,33 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
 }
 
 #ifdef __AVR_ARCH__
-static void decode_from_pgm(Map *map, PGM_VOID_P stored)
+static const void *get_eeprom_keymap_pointer(uint8_t idx)
 {
-  uint8_t temp[NUM_OF_KEYS];
+  if(idx == 0 || idx > MAXIMUM_KEYMAP_INDEX) return KEYMAP_POINTER_NULL;
 
-  memcpy_P(temp,((const uint8_t *)stored)+sizeof(Storedmap)-NUM_OF_KEYS,
-           NUM_OF_KEYS);
-  decode(map,temp);
+  const uint8_t *ptr=KEYMAP_POINTER_FROM_INDEX(idx);
+  uint8_t temp=eeprom_read_byte(ptr);
+  if(temp == 0x00 || temp == 0xff) return KEYMAP_POINTER_NULL;
+  return ptr+KEYMAP_NAME_LENGTH;
+}
+
+static uint8_t current_keymap_index;
+
+static void set_current_keymap(void)
+{
+  const uint8_t *mapptr=NULL;
+
+  current_keymap_index=get_keymap_config();
+
+  if(current_keymap_index > 0)
+    mapptr=get_eeprom_keymap_pointer(current_keymap_index);
+
+  if(mapptr == KEYMAP_POINTER_NULL)
+  {
+    current_keymap_index=0;
+    mapptr=standard_stored_keymap.codes;
+  }
+
+  decode(&current_keymap,mapptr,current_keymap_index);
 }
 #endif /* __AVR_ARCH__ */

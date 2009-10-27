@@ -99,7 +99,7 @@ int main(void)
   }
 
   print_stored("Converting stored map",&stored_map);
-  decode(&map_dest,stored_map.codes);
+  decode(&map_dest,stored_map.codes,0);
   print_square("Got square map",&map_dest);
   if(memcmp(keymap.mat,map_dest.mat,NUM_OF_ROWS*NUM_OF_COLUMNS) != 0)
   {

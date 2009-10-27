@@ -38,8 +38,6 @@
 #define COLS_DDR    DDRB
 #define COLS_PIN    PINB
 
-#include "usbfuns.c"
-
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"
@@ -49,7 +47,16 @@ static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];
 static Columnstate column_states[NUM_OF_ROWS];
 
+/* we use the same pinout for key map config as in the full-size version */
+static uint8_t get_keymap_config(void)
+{
+  uint8_t idx=~PIND;
+  idx=(((idx&0x80) >> 5)|((idx&0x08) >> 2)|((idx&0x02) >> 1))&0x07;
+  return idx;
+}
+
 #include "keymapdecode.c"
+#include "usbfuns.c"
 #include "scanrows.c"
 #include "processcolumns.c"
 #include "scankeys.c"
@@ -74,9 +81,7 @@ static void setup(void)
   usbDeviceDisconnect();
   wdt_reset();
 
-  /* decode standard key map from program memory to RAM */
-  /* XXX: the keyboard index should be read from jumper config */
-  decode_from_pgm(&current_keymap,&standard_stored_keymap);
+  set_current_keymap();
 
   _delay_ms(400);
 
