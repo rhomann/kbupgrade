@@ -253,7 +253,7 @@ enum keycodes {
    * so they will be mapped to the modifier byte in the USB report.
    */
   NOKEY_Modifiers=0xe0,
-  MOD_LCTRL=NOKEY_Modifiers,  /* 0x01 */
+  MOD_LCTRL=0xe0,             /* 0x01 */
   MOD_LSHIFT,                 /* 0x02 */
   MOD_LALT,                   /* 0x04 */
   MOD_LGUI,                   /* 0x08 */
