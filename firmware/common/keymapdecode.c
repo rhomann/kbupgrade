@@ -104,10 +104,9 @@ static uint8_t current_keymap_index;
 
 static void set_current_keymap(void)
 {
-  const uint8_t *mapptr=NULL;
-
   current_keymap_index=get_keymap_config();
 
+  const uint8_t *mapptr=KEYMAP_POINTER_NULL;
   if(current_keymap_index > 0)
     mapptr=get_eeprom_keymap_pointer(current_keymap_index);
 
