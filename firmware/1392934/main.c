@@ -38,8 +38,6 @@
 #define COLS_DDR    DDRB
 #define COLS_PIN    PINB
 
-#define MAXIMUM_KEYMAP_INDEX  3
-
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"

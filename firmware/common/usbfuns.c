@@ -22,8 +22,7 @@
  * MA  02110-1301  USA
  */
 
-#include <avr/eeprom.h>
-
+#include "eeprom.h"
 #include "usbdrv.h"
 #include "usbrequests.h"
 
@@ -74,8 +73,6 @@ static Report usb_report_buffer;
 static uchar usb_protocol_ver_buffer;
 static uchar usb_idle_rate;
 static uchar usb_expect_report;
-
-#define KEYMAP_POINTER_FROM_INDEX(I)  ((uint8_t *)0+(((I)-1)*sizeof(Storedmap)))
 
 /* This union is used to work around warnings that are thrown when casting
  * const pointers to non-const. */

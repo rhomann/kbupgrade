@@ -31,8 +31,6 @@
 #include "pindefs.h"
 #include "leddefs.h"
 
-#define MAXIMUM_KEYMAP_INDEX  3
-
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"
