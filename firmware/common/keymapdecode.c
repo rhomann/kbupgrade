@@ -20,13 +20,17 @@
  * MA  02110-1301  USA
  */
 
+#ifdef __AVR_ARCH__
+#include "eeprom.h"
+#endif /* __AVR_ARCH__ */
+
 #ifdef NO_GHOSTKEY_PREVENTION
 #ifndef NO_ENHANCED_GKP
 #define NO_ENHANCED_GKP 1
 #endif /* !NO_ENHANCED_GKP */
 #endif /* NO_GHOSTKEY_PREVENTION */
 
-static void decode(Map *map, const uint8_t *src, char from_eeprom)
+static void decode(Map *map, const uint8_t *src, uint8_t from_eeprom)
 {
 #ifndef __AVR_ARCH__
 #define pgm_read_byte(PTR)     (*(PTR))
@@ -84,3 +88,35 @@ static void decode(Map *map, const uint8_t *src, char from_eeprom)
 #endif /* !NO_ENHANCED_GKP */
   }
 }
+
+#ifdef __AVR_ARCH__
+static const void *get_eeprom_keymap_pointer(uint8_t idx)
+{
+  if(idx == 0 || idx > MAXIMUM_KEYMAP_INDEX) return KEYMAP_POINTER_NULL;
+
+  const uint8_t *ptr=KEYMAP_POINTER_FROM_INDEX(idx);
+  uint8_t temp=eeprom_read_byte(ptr);
+  if(temp == 0x00 || temp == 0xff) return KEYMAP_POINTER_NULL;
+  return ptr+KEYMAP_NAME_LENGTH;
+}
+
+static uint8_t current_keymap_index;
+
+static void set_current_keymap(void)
+{
+  const uint8_t *mapptr=NULL;
+
+  current_keymap_index=get_keymap_config();
+
+  if(current_keymap_index > 0)
+    mapptr=get_eeprom_keymap_pointer(current_keymap_index);
+
+  if(mapptr == KEYMAP_POINTER_NULL)
+  {
+    current_keymap_index=0;
+    mapptr=standard_stored_keymap.codes;
+  }
+
+  decode(&current_keymap,mapptr,current_keymap_index);
+}
+#endif /* __AVR_ARCH__ */

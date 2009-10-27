@@ -36,14 +36,20 @@
 #include "stdmap.h"
 #include "keymapdecoder.h"
 
-#define USB_SET_LED_STATE  set_led_state
-#include "usbfuns.c"
-
 static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];
 static Columnstate column_states[NUM_OF_ROWS];
 
+static uint8_t get_keymap_config(void)
+{
+  uint8_t idx=~PIND;
+  idx=(((idx&0x08) >> 2)|((idx&0x02) >> 1))&0x03;
+  return idx;
+}
+
 #include "keymapdecode.c"
+#define USB_SET_LED_STATE  set_led_state
+#include "usbfuns.c"
 #include "processcolumns.c"
 #include "scankeys.c"
 
@@ -143,9 +149,7 @@ static void setup(void)
   _delay_ms(50);
   set_led_state(0);
 
-  /* decode standard key map from program memory to RAM */
-  /* XXX: the keyboard index should be read from jumper config */
-  decode(&current_keymap,standard_stored_keymap.codes,0);
+  set_current_keymap();
 
   _delay_ms(100);
   set_led_state(LED_SCROLL);
