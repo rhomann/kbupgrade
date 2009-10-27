@@ -76,7 +76,7 @@ static void setup(void)
 
   /* decode standard key map from program memory to RAM */
   /* XXX: the keyboard index should be read from jumper config */
-  decode_from_pgm(&current_keymap,&standard_stored_keymap);
+  decode(&current_keymap,standard_stored_keymap.codes,0);
 
   _delay_ms(400);
 

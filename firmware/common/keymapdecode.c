@@ -26,8 +26,13 @@
 #endif /* !NO_ENHANCED_GKP */
 #endif /* NO_GHOSTKEY_PREVENTION */
 
-static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
+static void decode(Map *map, const uint8_t *src, char from_eeprom)
 {
+#ifndef __AVR_ARCH__
+#define pgm_read_byte(PTR)     (*(PTR))
+#define eeprom_read_byte(PTR)  (*(PTR))
+#endif /* !__AVR_ARCH__ */
+
   memset(map,0,sizeof(Map));
 
 #ifndef NO_ENHANCED_GKP
@@ -35,14 +40,8 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
 #endif /* !NO_ENHANCED_GKP */
 
   int keys_left=NUM_OF_KEYS;
-#ifdef __AVR_ARCH__
-  const prog_uint8_t *ptr=matrix_bits;
-#else /* !__AVR_ARCH__ */
-  const uint8_t *ptr=matrix_bits;
-#define pgm_read_byte(PTR) (*(PTR))
-#endif /* __AVR_ARCH__ */
-
   uint8_t mask=0x80;
+  const uint8_t *ptr=matrix_bits;
   uint8_t bits=pgm_read_byte(ptr);
 
 #ifndef NO_ENHANCED_GKP
@@ -54,7 +53,9 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
   {
     if(bits&mask)
     {
-      *dest=*src++;
+      if(from_eeprom) *dest=eeprom_read_byte(src);
+      else            *dest=pgm_read_byte(src);
+      ++src;
 #ifdef ZERO_CODES_ARE_TRASH_CODES
       if(*dest == 0) *dest=KEY_trash;
 #endif /* ZERO_CODES_ARE_TRASH_CODES */
@@ -83,14 +84,3 @@ static void decode(Map *map, const uint8_t src[NUM_OF_KEYS])
 #endif /* !NO_ENHANCED_GKP */
   }
 }
-
-#ifdef __AVR_ARCH__
-static void decode_from_pgm(Map *map, PGM_VOID_P stored)
-{
-  uint8_t temp[NUM_OF_KEYS];
-
-  memcpy_P(temp,((const uint8_t *)stored)+sizeof(Storedmap)-NUM_OF_KEYS,
-           NUM_OF_KEYS);
-  decode(map,temp);
-}
-#endif /* __AVR_ARCH__ */
