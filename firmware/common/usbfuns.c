@@ -138,6 +138,10 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
       eeprom_write_byte(loc,0xff);
       return 0;
     }
+   case KURQ_RESET:
+    /* loop "endlessly" for ~0.5s */
+    WDTCR=_BV(WDTOE)|_BV(WDE)|_BV(WDP2)|_BV(WDP0);
+    while(1);
    default:
     return 0;
   }

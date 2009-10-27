@@ -301,6 +301,7 @@ static void usage(const char *progname)
           "-g  Get key map stored at given index, write to file.\n"
           "-k  Write key map at given index.\n"
           "-d  Delete key map at given index.\n"
+          "-r  Reset keyboard controller.\n"
           "No option: print basic hardware information and all key maps.\n",
           progname,progname,progname,progname);
 }
@@ -309,6 +310,7 @@ int main(int argc, char *argv[])
 {
   USBKeyboard kb;
   int ret=EXIT_FAILURE;
+  int try_close_device=1;
 
   if(kb_get_device(&kb) == -1) return EXIT_FAILURE;
 
@@ -331,15 +333,22 @@ int main(int argc, char *argv[])
         temp=download_keymap(&kb,&info,argv[2],atoi(argv[3]));
       else if(argc == 4 && strcmp(argv[1],"-k") == 0)
         temp=upload_keymap(&kb,&info,argv[2],atoi(argv[3]));
-      else if (argc == 3 && strcmp(argv[1],"-d") == 0)
+      else if(argc == 3 && strcmp(argv[1],"-d") == 0)
         temp=delete_keymap(&kb,&info,atoi(argv[2]));
+      else if(argc == 2 && strcmp(argv[1],"-r") == 0)
+      {
+        /* sending will fail, so we'll fake success */
+        libusb_control_transfer(kb.handle,REQ_OUT,KURQ_RESET,0,0,NULL,0,5000);
+        temp=0;
+        try_close_device=0;
+      }
       else usage(argv[0]);
     }
 
     if(temp == 0) ret=EXIT_SUCCESS;
   }
 
-  kb_close_device(&kb);
+  if(try_close_device) kb_close_device(&kb);
 
   return ret;
 }

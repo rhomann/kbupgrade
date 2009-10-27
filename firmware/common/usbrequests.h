@@ -31,6 +31,7 @@ typedef enum
   KURQ_GET_LAYOUT,  /* Get keyboard layout. */
   KURQ_GET_KEYMAP,  /* Get selected key map (0=default, other from EEPROM). */
   KURQ_SET_KEYMAP,  /* Set key map (write to EEPROM). */
+  KURQ_RESET,       /* Reset keyboard controller. */
 
   /* internal requests */
   KURQ_GET_DATA_FROM_PGM,
