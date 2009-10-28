@@ -38,6 +38,10 @@
 #define COLS_DDR    DDRB
 #define COLS_PIN    PINB
 
+/* we use the same pinout for key map config as in the full-size version */
+#define CFG_KEYMAP0_PORT  PIND
+#define CFG_KEYMAP0_PIN   PIND7
+
 #include "usbkeycodes.h"
 #include "keyboard.h"
 #include "stdmap.h"
@@ -46,14 +50,6 @@
 static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];
 static Columnstate column_states[NUM_OF_ROWS];
-
-/* we use the same pinout for key map config as in the full-size version */
-static uint8_t get_keymap_config(void)
-{
-  uint8_t idx=~PIND;
-  idx=(((idx&0x80) >> 5)|((idx&0x08) >> 2)|((idx&0x02) >> 1))&0x07;
-  return idx;
-}
 
 #include "keymapdecode.c"
 #include "usbfuns.c"
@@ -81,7 +77,7 @@ static void setup(void)
   usbDeviceDisconnect();
   wdt_reset();
 
-  set_current_keymap(get_keymap_config());
+  set_current_keymap(get_current_keymap_index());
 
   _delay_ms(400);
 

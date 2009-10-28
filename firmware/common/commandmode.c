@@ -17,7 +17,7 @@ static void process_command(uint8_t key)
     /* set key map 0..9 */
     if(key == KEY_0) temp=0;
     else             temp=key-KEY_1+1;
-    if(temp != current_keymap_index) set_current_keymap(temp);
+    if(temp != get_current_keymap_index()) set_current_keymap(temp);
     break;
    default:
     break;

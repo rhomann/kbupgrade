@@ -93,7 +93,7 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
   {
    case KURQ_GET_HWINFO:
     ((KBHwinfo *)buffer)->max_mapindex=MAXIMUM_KEYMAP_INDEX;
-    ((KBHwinfo *)buffer)->current_mapindex=current_keymap_index;
+    ((KBHwinfo *)buffer)->current_mapindex=get_current_keymap_index();
     ((KBHwinfo *)buffer)->num_of_keys=NUM_OF_KEYS;
     ((KBHwinfo *)buffer)->num_of_rows=NUM_OF_ROWS;
     ((KBHwinfo *)buffer)->num_of_cols=NUM_OF_COLUMNS;

@@ -28,6 +28,9 @@
 #include <avr/wdt.h>
 #include <util/delay.h>
 
+#define CFG_KEYMAP0_PORT  PIND
+#define CFG_KEYMAP0_PIN   PIND3
+
 #include "pindefs.h"
 #include "leddefs.h"
 
@@ -39,13 +42,6 @@
 static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];
 static Columnstate column_states[NUM_OF_ROWS];
-
-static uint8_t get_keymap_config(void)
-{
-  uint8_t idx=~PIND;
-  idx=(((idx&0x08) >> 2)|((idx&0x02) >> 1))&0x03;
-  return idx;
-}
 
 #include "keymapdecode.c"
 #define USB_SET_LED_STATE  set_led_state
@@ -149,7 +145,7 @@ static void setup(void)
   _delay_ms(50);
   set_led_state(0);
 
-  set_current_keymap(get_keymap_config());
+  set_current_keymap(get_current_keymap_index());
 
   _delay_ms(100);
   set_led_state(LED_SCROLL);

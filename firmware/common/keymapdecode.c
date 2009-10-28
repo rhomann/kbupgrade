@@ -90,6 +90,23 @@ static void decode(Map *map, const uint8_t *src, uint8_t from_eeprom)
 }
 
 #ifdef __AVR_ARCH__
+static uint8_t get_current_keymap_index(void)
+{
+  if(!(CFG_KEYMAP0_PORT&_BV(CFG_KEYMAP0_PIN)))
+  {
+    /* locked at index 0 via jumper */
+    return 0;
+  }
+
+  return eeprom_read_byte(&CONFIG_POINTER->current_keymap_index);
+}
+
+static void write_current_keymap_index(uint8_t idx)
+{
+  if(eeprom_read_byte(&CONFIG_POINTER->current_keymap_index) != idx)
+    eeprom_write_byte(&CONFIG_POINTER->current_keymap_index,idx);
+}
+
 static const void *get_eeprom_keymap_pointer(uint8_t idx)
 {
   if(idx == 0 || idx > MAXIMUM_KEYMAP_INDEX) return KEYMAP_POINTER_NULL;
@@ -100,22 +117,19 @@ static const void *get_eeprom_keymap_pointer(uint8_t idx)
   return ptr+KEYMAP_NAME_LENGTH;
 }
 
-static uint8_t current_keymap_index;
-
 static void set_current_keymap(uint8_t idx)
 {
-  current_keymap_index=idx;
-
   const uint8_t *mapptr=KEYMAP_POINTER_NULL;
-  if(current_keymap_index > 0)
-    mapptr=get_eeprom_keymap_pointer(current_keymap_index);
+
+  if(idx > 0) mapptr=get_eeprom_keymap_pointer(idx);
 
   if(mapptr == KEYMAP_POINTER_NULL)
   {
-    current_keymap_index=0;
+    idx=0;
     mapptr=standard_stored_keymap.codes;
   }
 
-  decode(&current_keymap,mapptr,current_keymap_index);
+  write_current_keymap_index(idx);
+  decode(&current_keymap,mapptr,idx);
 }
 #endif /* __AVR_ARCH__ */
