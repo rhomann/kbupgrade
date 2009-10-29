@@ -6,7 +6,7 @@ AM_CPPFLAGS=-I$(top_srcdir)/firmware/common
 
 if CAN_BUILD_KBUPTOOL
 bin_PROGRAMS=kbuptool
-kbuptool_SOURCES=kbuptool.c kbcom.c kbcom.h
+kbuptool_SOURCES=kbuptool.c kbcom.c kbcom.h $(top_srcdir)/firmware/common/usbrequests.h
 kbuptool_LDADD=$(LIBUSB1LIBS)
 endif
 
