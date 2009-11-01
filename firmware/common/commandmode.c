@@ -4,6 +4,9 @@ static void process_command(uint8_t key)
 
   switch(key)
   {
+   case CMDMODE_ABORT_KEY:
+    /* the official way to exit command mode */
+    break;
    case KEY_1:
    case KEY_2:
    case KEY_3:

@@ -98,7 +98,7 @@ static Mode process_columns(void)
 #ifndef NO_GHOSTKEY_PREVENTION
         if(ghosts) continue;
 #endif /* !NO_GHOSTKEY_PREVENTION */
-        if(key != KEY_scrlck)
+        if(key != CMDMODE_ENTER_KEY)
         {
           if(num_of_keys < 6) usb_report_buffer.keys[num_of_keys++]=key;
           else if(num_of_keys == 6)
