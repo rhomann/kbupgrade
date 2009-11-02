@@ -19,6 +19,8 @@ used for the LEDs and their common GND (or +5V?). The PCB was found inside a
 (mounted in the same place as the one for the mouse buttons on the Lexmark
 model).
 
+Jumper KM0 is on PD3 (pin 17).
+
 
 Confirmed to work with the following keyboard models:
 

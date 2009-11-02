@@ -11,30 +11,33 @@ _              _
 First, configure the firmware by running the configure script. Please take a
 look at the output of "configure --help".
 In particular, make sure that the --with-avr-* options match your environment.
+Pay attention to any warning messages printed by the configure script.
 
 After configuration, either
 - run "make" in the same directory where you have run "configure" to build the
   firmware for all keyboards supported by Keyboard Upgrade, and also the
-  command line program for flashing the firmware via the boot loader;
+  supporting command line programs (one for communicating with the controller,
+  one for flashing the firmware);
 - or go to the subdirectory below the firmware/ directory that is appropriate
   for your keyboard, and run "make" there to build just that particular
-  firmware. The boot loader command line tool will not be built automatically
-  in this case, and must be built by running "make" in its subdirectory below
-  the tools/ directory.
+  firmware. The command line tools will not be built automatically in this
+  case, and must be built by running "make" in the tools/ subdirectory.
 
 Note that the boot loader command line tool ("bootloadHID") does not need to be
 built with every updated version of Keyboard Upgrade. You may build it once and
-put it conveniently somewhere in your path.
+put it conveniently somewhere in your path. The program is found in this
+location: tools/bootloadHID.2008-11-26/commandline/bootloadHID.
 
 After compiling the firmware, two relevant files will have been created in its
 respective directory: "boot.hex" (containing the boot loader) and "main.hex"
-(containing the main firmware code).
-Do not get confused by the files called "boot" and "main"; these have been
+(containing the main firmware code). For instance, firmware/1391401/main.hex
+will be the name of the firmware for a "regular" IBM Model M.
+Do not get confused by the files with names "boot" and "main"; these have been
 created for mere "technical reasons" and are not important for programming the
 microcontroller.
 
-_                _
-=== Installing ===
+_                                   _
+=== Preparing the Microcontroller ===
 
 Now, connect your AVR to your programmer, and type
 
@@ -43,11 +46,11 @@ $ make flashboot
 
 to program your AVR's fuses and to install the boot loader. (Of course, this
 only works if you are using a programmer supported by the Keyboard Upgrade
-build system. If not, you'll need to extend the build system, or program
-manually.)
+build system. If not, you'll need to program manually, or extend the build
+system to have this done automatically.)
 Your AVR is now prepared to be programmed with the main firmware code directly
 over USB using the "bootloadHID" program. (See further below for instructions
-for programming without using bootloadHID.) Therefore, you may also want to run
+for programming without using bootloadHID.) You are strongly encouraged to run
 
 $ make lock
 
@@ -57,40 +60,119 @@ the boot loader once more.
 But locking prevents the microcontroller to kill its own boot loader by
 accident, so it is generally a very good idea to do this.
 
+_                                          _
+=== Methods for Flashing Firmware Images ===
+
 To flash the main firmware code to your keyboard, connect it to a USB port
 while holding down the key that is used to activate the boot loader (this is
 usually the Escape key). For instance, if you are using an IBM Model M, press
-ESC, keep it depressed, and plug the keyboard into your USB port. The LEDs will
-start flashing to indicate that the boot loader is activated, ready to receive
-a firmware image. You may release the ESC key now. Now, type (on a different
-keyboard)
+"Esc", keep it depressed, and plug the keyboard into a free USB port of your
+computer. All LEDs will start flashing to indicate that the boot loader has
+been activated, ready to receive a firmware image. You may release the Escape
+key now. Now, type (on a different keyboard--see below if you don't have one)
 
 $ bootloadHID -r main.hex
 
 The -r option causes the keyboard to reset itself after the firmware has been
 flashed; re-plug the keyboard (or reset if you built in a reset switch) if you
-forgot to give option.
+forgot to add this option, but this time without holding down any key.
+When plugging in, your keyboard should flash its LEDs in a "Knight Rider"
+fashion to indicate its firmware has been started successfully, and you should
+be able to use your keyboard now.
 
-If you do not have or do not want to use a another keyboard for typing in the
+
+If you do not have or do not want to use another keyboard for typing in the
 above command, type, e.g.,
 
 $ sleep 10 && bootloadHID -r main.hex
 
 on your keyboard to be flashed, hit enter, and re-plug your keyboard within 10
 seconds with the key held down that activates the boot loader.
+Alternatively, for keyboards equipped with firmware 0.2.0 or above already, you
+may want to use this command instead:
+
+$ kbuptool -r && sleep 2 && bootloadHID -r main.hex
+
+This resets the keyboard via software, waits 2 seconds (just to be on the safe
+side), and then flashes the firmware. Since kbuptool -r does not cause the
+keyboard to enter its boot loader automatically, you'll need to hold down the
+key that activates the boot loader quickly after hitting enter to run this
+command line.
 
 
-If you don't want to use the boot loader, or cannot use it on your system, you
-can also program the main firmware code using your AVR programmer by typing
+If you don't want to use the boot loader at all, or cannot use it on your
+system, you can also program the main firmware code directly using your AVR
+programmer by typing
 
 $ make fuses
 $ make flashboot
 $ make flash
 $ make lock
 
-Note that you still need to write the boot loader to the microcontroller unless
-you have programmed the AVR's fuses not to use the boot loader ("make fuses"
-will always program the AVR to use one).
+Note that you'll still need to program the boot loader to the microcontroller
+unless you have programmed the AVR's fuses not to use the boot loader
+("make fuses" will always program the AVR to use one).
+
+_                          _
+=== Programming Key Maps ===
+
+Use the program "kbuptool" (in directory "tools") to talk to the keyboard
+controller. Run "kbuptool -h" for a list of options. Please note that for
+correct operation the version of kbuptool should match the version of the
+keyboard controller firmware.
+
+When started with no options, the program will show basic hardware information
+and print a list of key maps programmed to the controller. The key map at index
+0 is the one built into the firmware image, and it cannot be modified or
+deleted. The other slots can be used for user-defined key maps. The Python
+script procmatrix.py with option -M is used to build key map files.
+
+Example (from source root directory):
+
+$ tools/procmatrix.py -d matrices/1391401.matrix\
+ -U firmware/common/usbkeycodes.h -m mappings/colemak.map\
+ -m mappings/caps_is_ctrl.map -n 'Colemak, Caps Ctrl' -M colemak.map
+$ tools/kbuptool -k colemak.map 1
+
+The first command makes a Colemak key map for an IBM Model M, with Caps Lock
+re-mapped as an additional Control key. The key map is stored on file
+colemak.map. The second command sends the key map to the keyboard and stores it
+at index 1. Sometimes, this command fails---just run it again if this happens
+to you...
+Now, running kbuptool with no options should show a key map named
+"Colemak, Caps Ctrl" at index 1, ready to be activated---see Command Mode
+documentation further below!
+
+NOTE: Since uploading a key map may fail, consider programming only
+non-activated slots. This avoids trashing your currently activated key map. It
+is always safe to upload to any slot while key map 0 is activated. A second
+keyboard can always be used to re-program trashed key maps.
+
+In case switching key maps via software does not work for you anymore, there is
+a jumper named "KM0" on the various controller boards which can be used to lock
+the current key map to index 0. When KM0 is closed, the firmware's default key
+map gets activated, regardless of the key map setting stored on EEPROM. You can
+use this as a last resort to reanimate a keyboard that has become unusable as a
+result of uploading and activating broken key map data. Check the schematic of
+your controller or the README file in the directory containing the schematic to
+find out the jumper's location.
+
+_                  _
+=== Command Mode ===
+
+Hit the Scroll Lock (SL) key to activate command mode; the Scroll Lock LED will
+be toggled to indicate that command mode has been entered. After entering
+command mode, the next keystroke will perform some action, and the keyboard
+will return to normal mode afterwards. The host computer will not see any of
+your keystrokes, so it is safe to enter command mode at any time.
+
+Command keys:
+Escape      Exit command mode, do nothing.
+SL          Emit Scroll Lock. Hit SL four times in a row if your KVM switch
+            requires SL being hit twice for being activated.
+0, ..., 9   Activate corresponding key map. Key map 0 is a fixed key map that
+            is built into the firmware image. The selected key map index is
+            stored on EEPROM and loaded when the keyboard gets plugged in.
 
 
 Have fun!

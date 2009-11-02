@@ -6,6 +6,8 @@ One of the designs comes from the RUMP project by Chris Lee
 The other one comes from the Dulcimer project by Ronald Schaten
 (see http://www.schatenseite.de/dulcimer.html), made with KiCad.
 
+Jumper KM0 is on PD7 (pin 21).
+
 
 Confirmed to work with the following keyboard models:
 
