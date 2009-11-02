@@ -1,4 +1,4 @@
-static void process_command(uint8_t key)
+static char process_command(uint8_t key)
 {
   uint8_t temp;
 
@@ -7,6 +7,9 @@ static void process_command(uint8_t key)
    case CMDMODE_ABORT_KEY:
     /* the official way to exit command mode */
     break;
+   case CMDMODE_ENTER_KEY:
+    /* go back to normal mode, emit the keystroke for the command mode key */
+    return 1;
    case KEY_1:
    case KEY_2:
    case KEY_3:
@@ -25,4 +28,6 @@ static void process_command(uint8_t key)
    default:
     break;
   }
+
+  return 0;
 }

@@ -134,12 +134,23 @@ static uint8_t scankeys(void)
 #ifdef LED_ONOFF
         LED_ONOFF(SCROLL,scrlck_led_state);
 #endif /* LED_ONOFF */
+
+        /* inject a report with no keys pressed (the values in the buffer
+         * should be all 0) */
+        usb_report_buffer.keys[0]=KEY__;
+        return 1;
       }
     }
     break;
    case MODE_COMMAND:
-    process_command(get_command_key());
     mode=MODE_LEAVE_COMMAND;
+    if(process_command(get_command_key()))
+    {
+      /* inject a report containing the Scroll Lock keycode (the rest of the
+       * buffer should be all 0) */
+      usb_report_buffer.keys[0]=CMDMODE_ENTER_KEY;
+      return 1;
+    }
     break;
   }
 
