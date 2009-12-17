@@ -1,0 +1,29 @@
+# Korean DIY keyboard
+Device 356CL
+
+KEY_F5 KEY_break MOD_RCTRL       MOD_LCTRL
+KEY_Q  KEY_tab   KEY_A KEY_esc   KEY_Z     KEY_hash   KEY_1
+KEY_W  KEY_S     KEY_X KEY_F1    KEY_2     KEY_cpslck
+KEY_E  KEY_F3    KEY_D KEY_F4    KEY_C     KEY_F2     KEY_3
+KEY_R  KEY_T     KEY_F KEY_G     KEY_V     KEY_B      KEY_5     KEY_4
+KEY_U  KEY_Y     KEY_J KEY_H     KEY_M     KEY_N      KEY_6     KEY_7
+KEY_I  KEY_rbr   KEY_K KEY_F6    KEY_8     KEY_comma  KEY_equal
+KEY_O  KEY_F7    KEY_L KEY_dot   KEY_F8    KEY_9      KEY_Application
+KEY_P  KEY_lbr   KEY_0 KEY_smcol KEY_ping  KEY_slash  KEY_minus
+KEY_scrlck KEY_PrtScr  MOD_LALT  MOD_RALT
+KEY_bckspc KEY_enter   KEY_F11   KEY_F12   KEY_F9     KEY_F10   KEY_bckslsh
+KEY_spc    KEY_darr    KEY_del
+KEY_rarr   KEY_ins
+KEY_pgup   KEY_pgdn
+KEY_uarr   KEY_larr    KEY_home  KEY_end
+MOD_LSHIFT MOD_RSHIFT
+MOD_LGUI   MOD_RGUI
+
+KEY_Q KEY_W KEY_E   KEY_R    KEY_U    KEY_I    KEY_O     KEY_P     KEY_break  KEY_scrlck
+KEY_T KEY_Y KEY_F3  KEY_F7   KEY_tab  KEY_rbr  KEY_lbr   MOD_LGUI  KEY_bckspc MOD_LSHIFT KEY_cpslck
+KEY_A KEY_S KEY_D   KEY_F    KEY_J    KEY_K    KEY_L     KEY_smcol MOD_RGUI   MOD_RSHIFT KEY_bckslsh
+KEY_G KEY_H KEY_F4  KEY_F6   KEY_F11  KEY_esc  KEY_ping  MOD_LALT  KEY_spc    KEY_uarr
+KEY_Z KEY_X KEY_C   KEY_V    KEY_M    KEY_dot  MOD_RCTRL KEY_comma KEY_enter
+KEY_B KEY_N KEY_F12 MOD_RALT KEY_darr KEY_rarr KEY_larr  KEY_slash KEY_Application
+KEY_5 KEY_6 KEY_F1  KEY_F2   KEY_F8   KEY_F9   KEY_hash  KEY_equal MOD_LCTRL  KEY_minus  KEY_del KEY_ins KEY_pgup KEY_home
+KEY_1 KEY_2 KEY_3   KEY_4    KEY_7    KEY_8    KEY_9     KEY_0     KEY_F5     KEY_PrtScr KEY_F10 KEY_end KEY_pgdn
