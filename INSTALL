@@ -39,7 +39,9 @@ microcontroller.
 _                                   _
 === Preparing the Microcontroller ===
 
-Now, connect your AVR to your programmer, and type
+Now, if you haven't done so already, go to the subdirectory below the firmware/
+directory that is appropriate for your keyboard. Then, connect your AVR to your
+programmer, and type
 
 $ make fuses
 $ make flashboot
@@ -109,9 +111,10 @@ $ make flashboot
 $ make flash
 $ make lock
 
-Note that you'll still need to program the boot loader to the microcontroller
-unless you have programmed the AVR's fuses not to use the boot loader
-("make fuses" will always program the AVR to use one).
+Note that you still need to program the boot loader to the microcontroller
+unless you have programmed the AVR's fuses not to use the boot loader.
+That is, you cannot skip "make flashboot" since "make fuses" will program the
+AVR to use the boot loader.
 
 _                          _
 === Programming Key Maps ===
