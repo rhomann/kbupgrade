@@ -1,3 +1,8 @@
+* The method for generating file names for the binary image file distributions
+is too simple (but OK for now). We are using the AVR type to generate the name,
+but there could be multiple circuit designs for one keyboard based on the same
+MCU in the future. Hence, the circuit design name must be incorporated somehow.
+
 * The boot loader is nice, but the procedure for flashing is a bit awkward:
 plug in the keyboard, entering flash mode, THEN type bootloadHID... You'll need
 another keyboard to do this. :(  Starting bootloadHID before replugging doesn't

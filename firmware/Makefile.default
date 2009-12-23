@@ -41,8 +41,8 @@ boot.hex: boot
 MATRIXFILES=keyboard.h keymapdecoder.h stdmap.h
 SOURCES=main.c $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
 
-BUILT_SOURCES=matrixfiles.stamp
-CLEANFILES=matrixfiles.stamp $(MATRIXFILES) main.hex boot.hex
+BUILT_SOURCES=matrixfiles.stamp file_id.diz
+CLEANFILES=matrixfiles.stamp $(MATRIXFILES) main.hex boot.hex file_id.diz
 
 EXTRA_DIST=README
 
@@ -55,6 +55,13 @@ keyboard.h: matrixfiles.stamp
 keymapdecoder.h: matrixfiles.stamp
 stdmap.h: matrixfiles.stamp
 
+file_id.diz:
+	@echo "$(PACKAGE_STRING)" > $@
+	@echo $(ECHO_N) 'Firmware image for ' >> $@
+	@grep '^Device' $(MATRIXDEF) | sed 's/^\w\+\W\+//' >> $@
+	@echo 'Platform: '"$(AVRTYPE)" >> $@
+	@echo 'Contact: '"$(PACKAGE_BUGREPORT)" >> $@
+	@if test -f $(srcdir)/file_id.more; then echo '' >> $@; cat $(srcdir)/file_id.more >> $@; fi
 
 # Program fuse bits.
 fuses:

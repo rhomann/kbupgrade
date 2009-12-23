@@ -1,0 +1,15 @@
+#! /bin/sh
+
+set -e
+
+while test x"$1" != x
+do
+  fwdir="$1"
+  shift
+
+  zipname='ku_@VERSION@_@AVRTYPE@_'"`basename \"$fwdir\"`"'.zip'
+
+  echo "$zipname"
+  rm -f "$zipname"
+  zip -qj "$zipname" "$fwdir"/file_id.diz "$fwdir"/boot.hex "$fwdir"/main.hex
+done

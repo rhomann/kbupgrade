@@ -225,6 +225,7 @@ AM_CONDITIONAL([CAN_BUILD_BOOTLOADHID],[test $build_bootloadhid = yes])
 AM_CONDITIONAL([CAN_BUILD_KBUPTOOL],[test $build_kbuptool = yes])
 
 AC_CONFIG_FILES([Makefile
+                 make_dists.sh
                  firmware/1391401/Makefile
                  firmware/1392934/Makefile
                  firmware/M4-1/Makefile
