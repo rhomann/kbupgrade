@@ -59,8 +59,10 @@ file_id.diz:
 	@echo "$(PACKAGE_STRING)" > $@
 	@echo $(ECHO_N) 'Firmware image for ' >> $@
 	@grep '^Device' $(MATRIXDEF) | sed 's/^\w\+\W\+//' >> $@
+	@echo "$(PACKAGE_BUGREPORT)" >> $@
+	@echo '' >> $@
 	@echo 'Platform: '"$(AVRTYPE)" >> $@
-	@echo 'Contact: '"$(PACKAGE_BUGREPORT)" >> $@
+	@echo 'Fuses: low '"$(LOFUSE)"' high '"$(HIFUSE)"' lock '"$(LOCKFUSE)" >> $@
 	@if test -f $(srcdir)/file_id.more; then echo '' >> $@; cat $(srcdir)/file_id.more >> $@; fi
 
 # Program fuse bits.
