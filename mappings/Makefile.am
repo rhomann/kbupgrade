@@ -5,4 +5,6 @@ EXTRA_DIST=\
  colemak.map\
  dvorak.map\
  no_winkeys.map\
- rt3200_9block.map
+ rt3200_9block.map\
+ tarmak1.map\
+ tarmak2.map
