@@ -1,3 +1,9 @@
+* Add Carpalx mapping.
+
+* We may want to make use of usbConfiguration (see usbdrv.h).
+
+* USB_CFG_IMPLEMENT_HALT should be set to 1. What are the implications?
+
 * The method for generating file names for the binary image file distributions
 is too simple (but OK for now). We are using the AVR type to generate the name,
 but there could be multiple circuit designs for one keyboard based on the same
