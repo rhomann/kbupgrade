@@ -7,4 +7,5 @@ EXTRA_DIST=\
  no_winkeys.map\
  rt3200_9block.map\
  tarmak1.map\
- tarmak2.map
+ tarmak2.map\
+ ZXCVB_ergoshift_ISO.map
