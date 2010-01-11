@@ -1,5 +1,5 @@
 Device IBM M4-1
-Swap row    15..12,19..16,4..1,5..11  1..19 
+Swap row    15..12,19..16,4..1,5..11  1..19
 Swap column 1..8  8..1
 
 KEY_pgup KEY_pgdn

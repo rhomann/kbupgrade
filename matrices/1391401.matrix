@@ -25,4 +25,4 @@ KEY_7 KEY_8 KEY_9   KEY_0    KEY_end  KEY_pgdn    KEY_F10  KEY_F11   KEY_F12    
 KEY_Q KEY_W KEY_E   KEY_R    KEY_U    KEY_scrlck  KEY_I    KEY_O     KEY_P      KEY_KPplus  KEY_KP7   KEY_KP8    KEY_KP9
 KEY_A KEY_S KEY_D   KEY_F    KEY_J    KEY_bckslsh KEY_K    KEY_L     KEY_smcol  KEY_KPenter KEY_KP1   KEY_KP2    KEY_KP3
 KEY_Z KEY_X KEY_C   KEY_V    KEY_M    KEY_comma   KEY_dot  MOD_RCTRL MOD_RSHIFT KEY_KPslash KEY_enter KEY_break  KEY_KPast  KEY_numlock KEY_hash
-KEY_B KEY_N KEY_spc MOD_RALT KEY_larr KEY_KPminus KEY_darr KEY_rarr  KEY_slash 
+KEY_B KEY_N KEY_spc MOD_RALT KEY_larr KEY_KPminus KEY_darr KEY_rarr  KEY_slash
