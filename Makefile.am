@@ -1,5 +1,5 @@
 if CAN_BUILD_FIRMWARES
-WAREZ=firmware/1391401 firmware/1392934 firmware/M4-1
+WAREZ=firmware/1390702_noleds firmware/1391401 firmware/1392934 firmware/M4-1
 
 bindists: all make_dists.sh
 	$(SHELL) make_dists.sh $(WAREZ)

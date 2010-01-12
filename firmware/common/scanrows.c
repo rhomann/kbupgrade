@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -30,10 +30,6 @@
 #endif
 #endif
 
-#if NUM_OF_ROWS > 16
-#error Number of rows is greater than 16---Not implemented.
-#endif
-
 #ifdef NO_GHOSTKEY_PREVENTION
 #ifndef NO_ENHANCED_GKP
 #define NO_ENHANCED_GKP 1
@@ -50,8 +46,17 @@ static char update_column_states(void)
 #if NUM_OF_ROWS > 8
   ROWS_DDR2=0x00;
   ROWS_PORT2=0xff;
-#endif
+#endif /* NUM_OF_ROWS > 8 */
 
+#if NUM_OF_ROWS > 16
+  deactivate_high_rows();
+#endif /* NUM_OF_ROWS > 16 */
+
+  /* The loop iterates over all row pins; in each iteration one of the pins is
+   * configured as output pin, whereas the others are left as inputs with their
+   * pull-ups enabled. The output pin is set to 0 so that it pulls down the
+   * activated colums (column pins are configured as inputs with pull-ups
+   * enabled). */
   for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
   {
 #if NUM_OF_ROWS > 8
@@ -61,19 +66,41 @@ static char update_column_states(void)
       ROWS_PORT1=0xff;
     }
 
+#if NUM_OF_ROWS > 16
+    else if(row == 16)
+    {
+      ROWS_DDR2=0x00;
+      ROWS_PORT2=0xff;
+    }
+#endif /* NUM_OF_ROWS > 16 */
+
     if(row < 8)
     {
-#endif
+#endif /* NUM_OF_ROWS > 8 */
       ROWS_DDR1=_BV(row);
       ROWS_PORT1=~_BV(row);
 #if NUM_OF_ROWS > 8
     }
     else
+#if NUM_OF_ROWS > 16
+    if(row < 16)
+#endif /* NUM_OF_ROWS > 16 */
     {
       ROWS_DDR2=_BV(row&0x07);
       ROWS_PORT2=~_BV(row&0x07);
     }
-#endif
+#if NUM_OF_ROWS > 16
+    else
+    {
+      /* The code above assumes that the first 16 rows are activated using two
+       * ports that are used exclusively for this task. Having more than 16
+       * rows means that we'll have to use some pins from ports that are used
+       * for other purposes already, but at this point we don't know which pins
+       * they are. This inline function comes to a rescue. */
+      activate_high_row(row);
+    }
+#endif /* NUM_OF_ROWS > 16 */
+#endif /* NUM_OF_ROWS > 8 */
 
     _delay_us(30);
 
