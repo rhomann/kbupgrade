@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -27,6 +27,7 @@
 #define SHIFT_PORT  PORTB
 #define SHIFT_CLOCK _BV(PB3)
 #define SHIFT_DATA  _BV(PB4)
+#define SHIFT_NUM_OF_PINS  16
 
 #define COLS_PORT1  PORTC
 #define COLS_DDR1   DDRC

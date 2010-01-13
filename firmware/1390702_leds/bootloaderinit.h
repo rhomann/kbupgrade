@@ -23,34 +23,23 @@
 #include <util/delay.h>
 
 #include "pindefs.h"
-
-static inline void clock_data(void)
-{
-  SHIFT_PORT|=SHIFT_CLOCK;
-  _delay_us(5);
-  SHIFT_PORT&=~SHIFT_CLOCK;
-}
+#include "shiftreg.c"
 
 /*
  * activates on Escape key
  */
-static inline void  bootLoaderInit(void)
+static inline void bootLoaderInit(void)
 {
   PORTA=ROWS_ALL2|SHIFT_DATA;
   DDRA=SHIFT_CLOCK|SHIFT_DATA;
   PORTB=0xff;
   DDRB=0x00;
-  PORTC=0x7f;
+  PORTC=0x7f;  /* activate row 16 */
   DDRC=0x00;
   LED_DDR=LED_ALL_PINS;
   LED_PORT=LED_ALL_PINS;
 
-  /* set all outputs of shift register to 1 */
-  for(int i=0; i < 8; ++i)
-  {
-    _delay_us(5);
-    clock_data();
-  }
+  shift_clear_all();
 
   _delay_us(20);
 }

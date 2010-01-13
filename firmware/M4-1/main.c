@@ -48,13 +48,7 @@ static Columnstate column_states[NUM_OF_ROWS];
 #include "usbfuns.c"
 #include "processcolumns.c"
 #include "scankeys.c"
-
-static inline void clock_data(void)
-{
-  SHIFT_PORT|=SHIFT_CLOCK;
-  _delay_us(5);
-  SHIFT_PORT&=~SHIFT_CLOCK;
-}
+#include "shiftreg.c"
 
 /*
  * Update global array column_states with values read from the I/O pins.
@@ -73,12 +67,12 @@ static char update_column_states(void)
   for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
   {
     /* move the 0 to the next pin of shift register */
-    clock_data();
+    shift_clock_data();
     if(row == 0)
     {
       SHIFT_PORT|=SHIFT_DATA;
     }
-    else if(row >= 16)
+    else if(row >= SHIFT_NUM_OF_PINS)
     {
       ROWS_DDR=(ROWS_DDR&~ROWS_ALL)|_BV(row&0x07);
       ROWS_PORT=(ROWS_PORT|ROWS_ALL)&~_BV(row&0x07);
@@ -123,13 +117,7 @@ static void setup(void)
   PORTD=0xfa;   /* 1111 1010 */
   DDRD=0x70;    /* 0111 0000 */
 
-  /* set all outputs of shift registers to 1 */
-  SHIFT_PORT|=SHIFT_DATA;
-  for(int i=0; i < 16; ++i)
-  {
-    _delay_us(5);
-    clock_data();
-  }
+  shift_clear_all();
 
   /* initialize USB stuff, force enumeration */
   usbInit();

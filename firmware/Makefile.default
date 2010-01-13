@@ -27,7 +27,7 @@ BLDIR=$(top_srcdir)/tools/bootloadHID.2008-11-26/firmware
 VUSBDIR=$(srcdir)/../vusb
 
 boot_SOURCES=$(BLDIR)/boot.c $(BLDIR)/bootloaderconfig.h bootloaderinit.h $(BLDIR)/usbconfig.h $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
-boot_CPPFLAGS=$(CPPFLAGS) -I$(BLDIR)
+boot_CPPFLAGS=$(CPPFLAGS) -I$(BLDIR) -I$(srcdir)/../common
 boot_LDFLAGS=-Wl,--section-start=.text=$(BOOTLOADER_ADDRESS)
 
 all-local: main.hex boot.hex

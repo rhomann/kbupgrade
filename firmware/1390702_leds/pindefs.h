@@ -30,6 +30,7 @@
 #define SHIFT_PORT  PORTA
 #define SHIFT_CLOCK _BV(PA4)
 #define SHIFT_DATA  _BV(PA5)
+#define SHIFT_NUM_OF_PINS  8
 
 #define COLS_PORT   PORTB
 #define COLS_DDR    DDRB

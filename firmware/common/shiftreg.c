@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009, 2010  Robert Homann
+ * Copyright (C) 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -20,35 +20,27 @@
  * MA  02110-1301  USA
  */
 
-#include <util/delay.h>
+#ifndef SHIFT_NUM_OF_PINS
+#error Please define the total number of pins on your shift register(s) as\
+ SHIFT_NUM_OF_PINS.
+#endif /* !SHIFT_NUM_OF_PINS */
 
-#include "pindefs.h"
-
-#define SHIFT_NO_CLEAR_FUNCTION
-#include "shiftreg.c"
-
-/*
- * activates on Escape key
- */
-static inline void bootLoaderInit(void)
+static void shift_clock_data(void)
 {
-  DDRC=0;
-  PORTC=0xff;
-  LED_DDR=LED_ALL_PINS;
-  LED_PORT=LED_ALL_PINS|_BV(PIND7);
-  DDRB=_BV(DDB2)|_BV(DDB3)|_BV(DDB4);
-  PORTB=~(SHIFT_CLOCK|_BV(PB2));
-
-  /* shift a 0 to the row with the Escape key */
-  for(int i=0; i < SHIFT_NUM_OF_PINS; ++i)
-  {
-    if(i == 8) PORTB&=~SHIFT_DATA;
-    _delay_us(5);
-    shift_clock_data();
-    if(i == 8) PORTB|=SHIFT_DATA;
-  }
-
-  _delay_us(20);
+  SHIFT_PORT|=SHIFT_CLOCK;
+  _delay_us(5);
+  SHIFT_PORT&=~SHIFT_CLOCK;
 }
 
-#define bootLoaderCondition()   ((PINC&_BV(PINC7)) == 0)
+#ifndef SHIFT_NO_CLEAR_FUNCTION
+/* set all outputs of shift register to 1 */
+static void shift_clear_all(void)
+{
+  SHIFT_PORT|=SHIFT_DATA;
+  for(int i=0; i < SHIFT_NUM_OF_PINS; ++i)
+  {
+    _delay_us(5);
+    shift_clock_data();
+  }
+}
+#endif /* !SHIFT_NO_CLEAR_FUNCTION */
