@@ -34,6 +34,10 @@
 #define ROWS_PORT2  PORTA
 #define ROWS_DDR2   DDRA
 
+#define ROWS_PORT3  PORTD
+#define ROWS_DDR3   DDRD
+#define ROWS_ALL3   (_BV(PD4)|_BV(PD5)|_BV(PD6)|_BV(PD7))
+
 #define COLS_PORT   PORTB
 #define COLS_DDR    DDRB
 #define COLS_PIN    PINB
@@ -53,17 +57,17 @@ static Columnstate column_states[NUM_OF_ROWS];
 static inline void activate_high_row(uint8_t row)
 {
   /* lower 4 bits of temp are always 0 */
-  uint8_t temp=_BV(4+(row&0x0f));
+  uint8_t temp=_BV(4+(row&0x03));
 
-  DDRD=(DDRD&0x0f)|temp;
-  PORTD=(PORTD|0xf0)&~temp;
+  ROWS_DDR3=(ROWS_DDR3&~ROWS_ALL3)|temp;
+  ROWS_PORT3=(ROWS_PORT3|ROWS_PORT3)&~temp;
 }
 
 static inline void deactivate_high_rows(void)
 {
   /* enable pull-ups on all four rows on port D */
-  DDRD&=0x0f;
-  PORTD|=0xf0;
+  ROWS_DDR3&=~ROWS_ALL3;
+  ROWS_PORT3|=ROWS_ALL3;
 }
 
 #include "keymapdecode.c"
@@ -74,18 +78,18 @@ static inline void deactivate_high_rows(void)
 
 static void setup(void)
 {
-  /* port A through C are all inputs, enable pull-ups */
-  ROWS_PORT1=0xff;
-  ROWS_DDR1=0x00;
-  ROWS_PORT2=0xff;
-  ROWS_DDR2=0x00;
-  COLS_PORT=0xff;
-  COLS_DDR=0x00;
+  /* ports A through C are all inputs, enable pull-ups */
+  PORTA=0xff;
+  DDRA=0x00;
+  PORTB=0xff;
+  DDRB=0x00;
+  PORTC=0xff;
+  DDRC=0x00;
 
   /* port D has 2 inputs for jumper headers (pins 1 and 3), 4 inputs for
    * some of the rows (pins 4, 5, 6, and 7), and two ports for USB data
    * (pins 0 and 2) */
-  PORTD=0xfa;  /* 1111 1010: inputs on 7, 6, 5, 4, 3, 1; outputs on 2, 0 */
+  PORTD=0xfa;  /* 1111 1010 */
   DDRD=0x00;   /* 0000 0000 */
 
   /* initialize USB stuff, force enumeration */
