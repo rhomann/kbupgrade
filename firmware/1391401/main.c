@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
