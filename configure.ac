@@ -226,6 +226,7 @@ AM_CONDITIONAL([CAN_BUILD_KBUPTOOL],[test $build_kbuptool = yes])
 
 AC_CONFIG_FILES([Makefile
                  make_dists.sh
+                 firmware/1390702_leds/Makefile
                  firmware/1390702_noleds/Makefile
                  firmware/1391401/Makefile
                  firmware/1392934/Makefile

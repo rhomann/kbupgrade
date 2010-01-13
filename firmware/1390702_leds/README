@@ -1,0 +1,6 @@
+This is the firmware for IBM Model M 122-key terminal keyboards such as the IBM
+1390702 with LED support. Take a look at the simplified version without LED
+support if your keyboard doesn't have LEDs.
+
+Suitable PCBs:
+- Circuits are included (circuits/IBM_Model_M_122_keys/schematic.pdf).
