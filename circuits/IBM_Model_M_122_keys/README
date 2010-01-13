@@ -1,6 +1,6 @@
 There are two circuit designs for IBM Model M 122-key terminal keyboards
 in this directory: one with LED support (schematic.pdf), and a simpler
-circuit without LEDs (simple.pdf).
+circuit without LEDs (simple.pdf). Both have been made with KiCad.
 
 If your terminal keyboards does not have LEDs and you are not planning to
 add some, it is recommended to stick with the simpler design, which is
