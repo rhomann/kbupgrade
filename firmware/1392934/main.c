@@ -59,17 +59,17 @@ static Columnstate column_states[NUM_OF_ROWS];
 
 static void setup(void)
 {
-  /* port A through C are all inputs, enable pull-ups */
-  ROWS_PORT1=0xff;
-  ROWS_DDR1=0x00;
-  ROWS_PORT2=0xff;
-  ROWS_DDR2=0x00;
-  COLS_PORT=0xff;
-  COLS_DDR=0x00;
+  /* ports A through C are all inputs, enable pull-ups */
+  PORTA=0xff;
+  DDRA=0x00;
+  PORTB=0xff;
+  DDRB=0x00;
+  PORTC=0xff;
+  DDRC=0x00;
 
   /* port D has 6 inputs for jumper headers (pins 1, 3, 4, 5, 6, 7), and two
    * ports for USB data (pins 0 and 2) */
-  PORTD=0xfa;  /* 1111 1010: inputs on 7, 6, 5, 4, 3, 1; outputs on 2, 0 */
+  PORTD=0xfa;  /* 1111 1010 */
   DDRD=0x00;   /* 0000 0000 */
 
   /* initialize USB stuff, force enumeration */
