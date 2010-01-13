@@ -23,9 +23,10 @@ This open source firmware was designed for use on homebrew keyboard controllers
 based on Atmel AVR microcontrollers--in particular, the ATMEGA series.
 Currently, these keyboards are supported:
 
-- IBM Model M
-- IBM Model M Mini
+- IBM Model M (1391401 and compatibles)
+- IBM Model M Mini (1392934 and compatibles)
 - IBM M4-1 (without trackpoint)
+- IBM Model M 122-key terminal keyboards (1390702 and compatibles)
 
 Schematics are included. Support for new controller designs can be added fairly
 easily by re-using a common set of source code files.

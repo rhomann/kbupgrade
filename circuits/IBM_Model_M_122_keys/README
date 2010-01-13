@@ -1,0 +1,12 @@
+There are two circuit designs for IBM Model M 122-key terminal keyboards
+in this directory: one with LED support (schematic.pdf), and a simpler
+circuit without LEDs (simple.pdf).
+
+If your terminal keyboards does not have LEDs and you are not planning to
+add some, it is recommended to stick with the simpler design, which is
+also a bit cheaper than the LED-enabled version.
+
+Jumper KM0 is on PD7 (pin 21) in the version with LED support, and on
+PD3 (pin 17) in the simplified version.
+
+Thanks to Specter_57 for providing the keyboard matrix information.

@@ -29,6 +29,15 @@ CIRCUITS=\
  circuits/IBM_Model_M/dulcimer.000\
  circuits/IBM_Model_M/dulcimer.stf\
  circuits/IBM_Model_M/dulcimer-SilkS_Cmp.pdf\
- circuits/IBM_Model_M/rump-schematic.png
+ circuits/IBM_Model_M/rump-schematic.png\
+ circuits/IBM_Model_M_122_keys/74hc164.lib\
+ circuits/IBM_Model_M_122_keys/README\
+ circuits/IBM_Model_M_122_keys/schematic.pdf\
+ circuits/IBM_Model_M_122_keys/schematic.pro\
+ circuits/IBM_Model_M_122_keys/schematic.sch\
+ circuits/IBM_Model_M_122_keys/simple.pdf\
+ circuits/IBM_Model_M_122_keys/simple.pro\
+ circuits/IBM_Model_M_122_keys/simple.sch
+
 
 EXTRA_DIST=$(CIRCUITS) README.git README.matrix
