@@ -1,5 +1,5 @@
 EESchema Schematic File Version 2
-LIBS:power,avr,device,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,contrib,valves,./simple.cache
+LIBS:power,avr,device,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,contrib,valves
 EELAYER 24  0
 EELAYER END
 $Descr A4 11700 8267
@@ -13,6 +13,18 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Wire Wire Line
+	6100 4400 6500 4400
+Wire Wire Line
+	6100 4200 6500 4200
+Wire Wire Line
+	6100 4000 6500 4000
+Wire Wire Line
+	6100 3800 6500 3800
+Wire Wire Line
+	6100 3600 6500 3600
+Wire Wire Line
+	6100 3400 6500 3400
 Wire Bus Line
 	6000 2400 6000 4300
 Wire Bus Line
@@ -197,6 +209,18 @@ Wire Wire Line
 	4250 4400 4800 4400
 Wire Bus Line
 	4900 4300 6000 4300
+Wire Wire Line
+	6100 3300 6500 3300
+Wire Wire Line
+	6100 3500 6500 3500
+Wire Wire Line
+	6100 3700 6500 3700
+Wire Wire Line
+	6100 3900 6500 3900
+Wire Wire Line
+	6100 4100 6500 4100
+Wire Wire Line
+	6100 4300 6500 4300
 Entry Wire Line
 	6000 4300 6100 4400
 Entry Wire Line
