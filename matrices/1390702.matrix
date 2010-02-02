@@ -1,14 +1,15 @@
 Device IBM 1390702
+Swap row 5..12,20..13,4..1 1..20
+Swap column 1..8 8..1
 
 # Incorrectly assigned key codes:
 # - KEY_ins*   : "PA1/Dup"
-# - KEY_Cancel : "Attn"
 # - KEY_Execute: "ErEOF"
 # - KEY_Int1   : blank key below "PrtSc", bottom row on the left
 # - KEY_Int2   : the other blank key next to KEY_Int1
 
 MOD_LCTRL MOD_LALT KEY_larr KEY_KPslash KEY_KPplus KEY_KPminus
-KEY_spc KEY_KP1 KEY_Cancel KEY_CrSel KEY_break KEY_PrtScr KEY_Int2
+KEY_spc KEY_KP1 KEY_SysReq KEY_CrSel KEY_break KEY_PrtScr KEY_Int2
 KEY_tab KEY_cpslck MOD_RCTRL KEY_Clear KEY_Execute KEY_Copy KEY_Int1
 MOD_LSHIFT MOD_RSHIFT MOD_RALT
 KEY_1 KEY_grave KEY_Q KEY_A KEY_Euro KEY_Z
@@ -31,7 +32,7 @@ KEY_home KEY_rarr KEY_KPenter
 KEY_G KEY_H KEY_ping MOD_LCTRL MOD_RALT KEY_uarr KEY_darr KEY_home KEY_F1 KEY_F2 KEY_F13 KEY_Int1 KEY_Int2
 KEY_A KEY_S KEY_D KEY_F KEY_J KEY_K KEY_L KEY_smcol KEY_end KEY_rarr KEY_KP4 KEY_KP5 KEY_KP6 KEY_KPminus KEY_F3 KEY_F14 KEY_F15 KEY_PrtScr KEY_Copy
 KEY_1 KEY_2 KEY_3 KEY_4 KEY_7 KEY_8 KEY_9 KEY_0 KEY_pgdn KEY_esc KEY_scrlck KEY_KPast KEY_KPslash KEY_F4 KEY_F5 KEY_F16 KEY_CrSel
-KEY_5 KEY_6 KEY_grave KEY_minus KEY_equal KEY_bckspc KEY_ins* KEY_pgup KEY_F6 KEY_F17 KEY_F18 KEY_Clear KEY_Cancel
+KEY_5 KEY_6 KEY_grave KEY_minus KEY_equal KEY_bckspc KEY_ins* KEY_pgup KEY_F6 KEY_F17 KEY_F18 KEY_Clear KEY_SysReq
 KEY_Q KEY_W KEY_E KEY_R KEY_U KEY_I KEY_O KEY_P KEY_tab KEY_del KEY_KP7 KEY_KP8 KEY_KP9 KEY_KPplus KEY_F7 KEY_F8 KEY_F19 KEY_break
 KEY_T KEY_Y KEY_lbr KEY_rbr KEY_ins KEY_F9 KEY_F20 KEY_F21 KEY_ExSel KEY_Execute
 KEY_enter KEY_cpslck KEY_bckslsh KEY_Z KEY_X KEY_C KEY_V KEY_M KEY_comma KEY_dot MOD_RSHIFT KEY_larr KEY_KP1 KEY_KP2 KEY_KP3 KEY_F10 KEY_F11 KEY_F22
