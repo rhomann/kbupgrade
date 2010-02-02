@@ -39,7 +39,7 @@ UseNetN=0
 LabSize=60
 [eeschema/libraries]
 LibName1=power
-LibName2=./74hc164
+LibName2=./74hc165
 LibName3=1wire
 LibName4=avr
 LibName5=device
