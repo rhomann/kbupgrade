@@ -1,5 +1,5 @@
 EESchema Schematic File Version 2
-LIBS:power,./74hc165,1wire,avr,device,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,contrib,valves,./schematic.cache
+LIBS:power,./74hc165,1wire,avr,device,conn,linear,regul,74xx,cmos4000,adc-dac,memory,xilinx,special,microcontrollers,dsp,microchip,analog_switches,motorola,texas,intel,audio,interface,digital-audio,philips,display,cypress,siliconi,contrib,valves
 EELAYER 24  0
 EELAYER END
 $Descr A4 11700 8267
@@ -457,7 +457,7 @@ L R R16
 U 1 1 4B672638
 P 9200 1800
 F 0 "R16" V 9280 1800 50  0000 C C
-F 1 "R" V 9200 1800 50  0000 C C
+F 1 "20k" V 9200 1800 50  0000 C C
 	1    9200 1800
 	1    0    0    -1  
 $EndComp
@@ -466,7 +466,7 @@ L R R15
 U 1 1 4B672635
 P 9000 1800
 F 0 "R15" V 9080 1800 50  0000 C C
-F 1 "R" V 9000 1800 50  0000 C C
+F 1 "20k" V 9000 1800 50  0000 C C
 	1    9000 1800
 	1    0    0    -1  
 $EndComp
@@ -475,7 +475,7 @@ L R R14
 U 1 1 4B672634
 P 8800 1800
 F 0 "R14" V 8880 1800 50  0000 C C
-F 1 "R" V 8800 1800 50  0000 C C
+F 1 "20k" V 8800 1800 50  0000 C C
 	1    8800 1800
 	1    0    0    -1  
 $EndComp
@@ -484,7 +484,7 @@ L R R13
 U 1 1 4B672632
 P 8600 1800
 F 0 "R13" V 8680 1800 50  0000 C C
-F 1 "R" V 8600 1800 50  0000 C C
+F 1 "20k" V 8600 1800 50  0000 C C
 	1    8600 1800
 	1    0    0    -1  
 $EndComp
@@ -493,7 +493,7 @@ L R R12
 U 1 1 4B672631
 P 8400 1800
 F 0 "R12" V 8480 1800 50  0000 C C
-F 1 "R" V 8400 1800 50  0000 C C
+F 1 "20k" V 8400 1800 50  0000 C C
 	1    8400 1800
 	1    0    0    -1  
 $EndComp
@@ -502,7 +502,7 @@ L R R11
 U 1 1 4B67262F
 P 8200 1800
 F 0 "R11" V 8280 1800 50  0000 C C
-F 1 "R" V 8200 1800 50  0000 C C
+F 1 "20k" V 8200 1800 50  0000 C C
 	1    8200 1800
 	1    0    0    -1  
 $EndComp
@@ -511,7 +511,7 @@ L R R10
 U 1 1 4B67262D
 P 8000 1800
 F 0 "R10" V 8080 1800 50  0000 C C
-F 1 "R" V 8000 1800 50  0000 C C
+F 1 "20k" V 8000 1800 50  0000 C C
 	1    8000 1800
 	1    0    0    -1  
 $EndComp
@@ -520,7 +520,7 @@ L R R9
 U 1 1 4B67262A
 P 7800 1800
 F 0 "R9" V 7880 1800 50  0000 C C
-F 1 "R" V 7800 1800 50  0000 C C
+F 1 "20k" V 7800 1800 50  0000 C C
 	1    7800 1800
 	1    0    0    -1  
 $EndComp
