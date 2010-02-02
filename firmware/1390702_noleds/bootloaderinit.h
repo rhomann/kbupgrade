@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -27,12 +27,14 @@
  */
 static inline void  bootLoaderInit(void)
 {
-  PORTA=~_BV(PA3);
-  DDRA=_BV(DDA3);
+  PORTA=~_BV(PA4);
+  DDRA=_BV(DDA4);
   PORTB=0xff;
   DDRB=0;
-  DDRD&=0x0f;
-  PORTD|=0xf0;
+  PORTC=0xff;
+  DDRC=0;
+  PORTD=0xf0;
+  DDRD=0;
   _delay_us(20);
 }
 
