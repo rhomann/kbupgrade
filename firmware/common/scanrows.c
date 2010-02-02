@@ -104,7 +104,12 @@ static char update_column_states(void)
 
     _delay_us(30);
 
+#ifdef COLS_PIN
     Columnstate cols=COLS_PIN;
+#else /* !COLS_PIN */
+    Columnstate cols=read_columns();
+#endif /* COLS_PIN */
+
 #ifndef NO_ENHANCED_GKP
     cols|=column_valid_mask[row];
 #endif /* !NO_ENHANCED_GKP */

@@ -23,6 +23,7 @@
 #include <util/delay.h>
 
 #include "pindefs.h"
+#define SHIFT_PISO_REGISTER
 #include "shiftreg.c"
 
 /*
@@ -30,18 +31,20 @@
  */
 static inline void bootLoaderInit(void)
 {
-  PORTA=ROWS_ALL2|SHIFT_DATA;
-  DDRA=SHIFT_CLOCK|SHIFT_DATA;
-  PORTB=0xff;
-  DDRB=0x00;
-  PORTC=0x7f;  /* activate row 16 */
+  PORTA=~_BV(PA4);  /* activate row 16 */
+  DDRA=_BV(DDA4);
+  PORTB=~SHIFT_CLOCK;
+  DDRB=SHIFT_CLOCK|SHIFT_NLOAD;
+  PORTC=0xff;
   DDRC=0x00;
   LED_DDR=LED_ALL_PINS;
   LED_PORT=LED_ALL_PINS;
-
-  shift_clear_all();
-
   _delay_us(20);
 }
 
-#define bootLoaderCondition()   ((PINB&_BV(PINB5)) == 0)
+static inline uint8_t bootLoaderCondition(void)
+{
+  shift_load_reg();
+  Shiftregbits cols=shift_read_out();
+  return ((cols&0x20) == 0);  /* Escape sits on column 3 */
+}

@@ -25,16 +25,17 @@
 
 #define ROWS_PORT2  PORTA
 #define ROWS_DDR2   DDRA
-#define ROWS_ALL2   (_BV(PA0)|_BV(PA1)|_BV(PA2)|_BV(PA3))
 
-#define SHIFT_PORT  PORTA
-#define SHIFT_CLOCK _BV(PA4)
-#define SHIFT_DATA  _BV(PA5)
+#define ROWS_PORT3  PORTB
+#define ROWS_DDR3   DDRB
+#define ROWS_ALL3   (_BV(PB0)|_BV(PB1)|_BV(PB2)|_BV(PB3))
+
+#define SHIFT_PORT  PORTB
+#define SHIFT_PIN   PINB
+#define SHIFT_CLOCK _BV(PB5)
+#define SHIFT_NLOAD _BV(PB6)
+#define SHIFT_DATA  _BV(PB4)
 #define SHIFT_NUM_OF_PINS  8
-
-#define COLS_PORT   PORTB
-#define COLS_DDR    DDRB
-#define COLS_PIN    PINB
 
 #define LED_PORT        PORTD
 #define LED_DDR         DDRD

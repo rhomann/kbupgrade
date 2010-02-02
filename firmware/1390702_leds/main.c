@@ -43,84 +43,48 @@ static Map current_keymap;
 static Columnstate column_valid_mask[NUM_OF_ROWS];
 static Columnstate column_states[NUM_OF_ROWS];
 
+static inline void activate_high_row(uint8_t row)
+{
+  uint8_t temp=_BV(row&0x03);
+
+  ROWS_DDR3=(ROWS_DDR3&~ROWS_ALL3)|temp;
+  ROWS_PORT3=(ROWS_PORT3|ROWS_PORT3)&~temp;
+}
+
+static inline void deactivate_high_rows(void)
+{
+  /* enable pull-ups on all four rows on port D */
+  ROWS_DDR3&=~ROWS_ALL3;
+  ROWS_PORT3|=ROWS_ALL3;
+}
+
+#define SHIFT_PISO_REGISTER
+#include "shiftreg.c"
+
+static Columnstate read_columns(void)
+{
+  shift_load_reg();
+  return shift_read_out();
+}
+
 #include "keymapdecode.c"
 #define USB_SET_LED_STATE  set_led_state
 #include "usbfuns.c"
+#include "scanrows.c"
 #include "processcolumns.c"
 #include "scankeys.c"
-#include "shiftreg.c"
-
-/*
- * Update global array column_states with values read from the I/O pins.
- */
-static char update_column_states(void)
-{
-  char state_changed=0;
-
-  /* shift a zero through the shift register */
-  SHIFT_PORT&=~SHIFT_DATA;
-
-  /* enable pull-ups on the twelve remaining rows */
-  ROWS_DDR1=0x00;
-  ROWS_PORT1=0xff;
-  ROWS_DDR2&=~ROWS_ALL2;
-  ROWS_PORT2|=ROWS_ALL2;
-
-  for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
-  {
-    /* move the 0 to the next pin of shift register */
-    shift_clock_data();
-    if(row == 0)
-    {
-      SHIFT_PORT|=SHIFT_DATA;
-    }
-    else if(row >= SHIFT_NUM_OF_PINS)
-    {
-      if(row == 8+SHIFT_NUM_OF_PINS)
-      {
-        ROWS_DDR1=0x00;
-        ROWS_PORT1=0xff;
-      }
-
-      if(row < 8+SHIFT_NUM_OF_PINS)
-      {
-        ROWS_DDR1=_BV(row&0x07);
-        ROWS_PORT1=~_BV(row&0x07);
-      }
-      else
-      {
-        /* remaining four rows on second row port */
-        ROWS_DDR2=(ROWS_DDR2&~ROWS_ALL2)|_BV(row&0x07);
-        ROWS_PORT2=(ROWS_PORT2|ROWS_ALL2)&~_BV(row&0x07);
-      }
-    }
-
-    _delay_us(30);
-
-    /* read 8 column bits */
-    Columnstate cols=COLS_PIN;
-    cols|=column_valid_mask[row];
-    if(column_states[row] != cols)
-    {
-      column_states[row]=cols;
-      state_changed=1;
-    }
-  }
-
-  return state_changed;
-}
 
 static void setup(void)
 {
-  /* port A has 4 inputs for some rows (pins 0, 1, 2, 3), two outputs for
-   * driving the shift register (pins 4 and 5), and two unused pins (pins 6 and
-   * 7, tri-stated) */
-  PORTA=ROWS_ALL2;
-  DDRA=SHIFT_CLOCK|SHIFT_DATA;
+  /* port B has 4 inputs for some rows (pins 0, 1, 2, 3), two outputs for
+   * driving the shift register (pins 5 and 6), one input for reading from
+   * the shift register (pin 4), and one unused pin (pin 7, tri-stated) */
+  PORTB=~SHIFT_CLOCK;
+  DDRB=SHIFT_CLOCK|SHIFT_NLOAD;
 
-  /* ports B and C are all inputs, enable pull-ups */
-  PORTB=0xff;
-  DDRB=0x00;
+  /* ports A and C are all inputs, enable pull-ups */
+  PORTA=0xff;
+  DDRA=0x00;
   PORTC=0xff;
   DDRC=0x00;
 
@@ -128,8 +92,6 @@ static void setup(void)
    * grounds (pins 4, 5, 6), and two ports for USB data (pins 0 and 2) */
   PORTD=0xfa;   /* 1111 1010 */
   DDRD=0x70;    /* 0111 0000 */
-
-  shift_clear_all();
 
   /* initialize USB stuff, force enumeration */
   usbInit();

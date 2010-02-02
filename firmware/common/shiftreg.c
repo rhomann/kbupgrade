@@ -25,6 +25,16 @@
  SHIFT_NUM_OF_PINS.
 #endif /* !SHIFT_NUM_OF_PINS */
 
+#ifdef SHIFT_PISO_REGISTER
+#if SHIFT_NUM_OF_PINS <= 8
+typedef uint8_t  Shiftregbits;
+#elif SHIFT_NUM_OF_PINS <= 16
+typedef uint16_t Shiftregbits;
+#else
+#error Number of pins on shift register is greater than 16; not implemented.
+#endif
+#endif /* SHIFT_PISO_REGISTER */
+
 static void shift_clock_data(void)
 {
   SHIFT_PORT|=SHIFT_CLOCK;
@@ -32,15 +42,41 @@ static void shift_clock_data(void)
   SHIFT_PORT&=~SHIFT_CLOCK;
 }
 
-#ifndef SHIFT_NO_CLEAR_FUNCTION
+#if !(defined SHIFT_NO_CLEAR_FUNCTION || defined SHIFT_PISO_REGISTER)
 /* set all outputs of shift register to 1 */
 static void shift_clear_all(void)
 {
   SHIFT_PORT|=SHIFT_DATA;
-  for(int i=0; i < SHIFT_NUM_OF_PINS; ++i)
+  for(uint8_t i=0; i < SHIFT_NUM_OF_PINS; ++i)
   {
     _delay_us(5);
     shift_clock_data();
   }
 }
-#endif /* !SHIFT_NO_CLEAR_FUNCTION */
+#endif /* !(SHIFT_NO_CLEAR_FUNCTION || SHIFT_PISO_REGISTER) */
+
+#ifdef SHIFT_PISO_REGISTER
+static void shift_load_reg(void)
+{
+  SHIFT_PORT&=~SHIFT_NLOAD;
+  _delay_us(5);
+  SHIFT_PORT|=SHIFT_NLOAD;
+}
+
+static Shiftregbits shift_read_out(void)
+{
+  Shiftregbits data=0;
+
+  for(uint8_t i=0; i < SHIFT_NUM_OF_PINS-1; ++i)
+  {
+    if(SHIFT_PIN&SHIFT_DATA) data|=1;
+    data<<=1;
+    _delay_us(5);
+    shift_clock_data();
+  }
+
+  if(SHIFT_PIN&SHIFT_DATA) data|=1;
+
+  return data;
+}
+#endif /* SHIFT_PISO_REGISTER */
