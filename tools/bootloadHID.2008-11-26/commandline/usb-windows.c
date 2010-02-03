@@ -47,7 +47,7 @@ char            *ascii = buffer;
     *ascii++ = 0;
 }
 
-int usbOpenDevice(usbDevice_t **device, int vendor, char *vendorName, int product, char *productName, int usesReportIDs)
+int usbOpenDevice(usbDevice_t **device, int vendor, const char *vendorName, int product, const char *productName, int usesReportIDs)
 {
 GUID                                hidGuid;        /* GUID for HID driver */
 HDEVINFO                            deviceInfoList;

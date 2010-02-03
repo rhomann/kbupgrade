@@ -140,6 +140,7 @@ AS_IF([test x"$AVRGCC" = x || test x"$AVROBJCP" = x],
         build_firmwares=no
       ])
 
+AC_ARG_VAR([LIBUSBCFG],[path to the libusb-config script (for libusb 0.1.x)])
 AC_CHECK_PROGS([LIBUSBCFG],[libusb-config])
 AC_ARG_VAR([AVRDUDE],[name of the avrdude executable])
 AC_CHECK_PROGS([AVRDUDE],[avrdude])
@@ -180,8 +181,8 @@ AS_IF([test x"$LIBUSBCFG" = x],
             LIBUSB0LIBS='-lusb' ])
     LIBS="$save_LIBS"
   ],
-  [ LIBUSB0CFLAGS="`libusb-config --cflags`"
-    LIBUSB0LIBS="`libusb-config --libs`" ]
+  [ LIBUSB0CFLAGS="`\"$LIBUSBCFG\" --cflags`"
+    LIBUSB0LIBS="`\"$LIBUSBCFG\" --libs`" ]
 )
 
 save_LIBS="$LIBS"
