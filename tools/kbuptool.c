@@ -24,10 +24,17 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 #include <ctype.h>
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif
 
 #include "kbcom.h"
 #include "usbrequests.h"
@@ -201,7 +208,7 @@ static int download_keymap(USBKeyboard *kb, const KBHwinfo *info,
   if(get_keymap(kb,mapindex,keymap,sizeof(keymap)) != 0) return -1;
 
   if(keymap[0] == '\0' || keymap[0] == 0xff)
-    fprintf(stderr,"Warning: key map data belongs to deleted entry.\n");
+    fprintf(stderr,"Warning: downloaded key map data of deleted entry.\n");
 
   return write_blob_to_file(outfilename,keymap,sizeof(keymap));
 }
@@ -291,29 +298,209 @@ static int delete_keymap(USBKeyboard *kb, const KBHwinfo *info, int mapindex)
 
 static void usage(const char *progname)
 {
-  fprintf(stderr,
-          "Usage: %s [-n num] -l filename\n"
-          "       %s [-n num] -g filename index\n"
-          "       %s [-n num] -k filename index\n"
-          "       %s [-n num] -d index\n"
-          "       %s [-n num] -r\n"
-          "\nOptions:\n"
-          "-l  Get keyboard layout, write to file.\n"
-          "-g  Get key map stored at given index, write to file.\n"
-          "-k  Write key map at given index.\n"
-          "-d  Delete key map at given index.\n"
-          "-r  Reset keyboard controller.\n"
-          "-n  Select keyboard if there is more than one.\n"
-          "No option: print basic hardware information and all key maps.\n",
-          progname,progname,progname,progname);
+  fprintf(stderr,"kbuptool is part of " PACKAGE_STRING ".\n\
+Copyright (C) 2009, 2010  Robert Homann.\n\
+\n\
+This program is distributed in the hope that it will be useful, but WITHOUT\n\
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS\n\
+FOR A PARTICULAR PURPOSE. See kbuptool -V for details and license information.\n\
+\n\
+Usage: %s [-n num] -l -f filename\n\
+       %s [-n num] -g -f filename -i index\n\
+       %s [-n num] -k -f filename -i index\n\
+       %s [-n num] -d -i index\n\
+       %s [-n num] [-r]\n\
+       %s -hV\n\
+\n\
+Options:\n\
+  -l  Get keyboard layout, write to file.\n\
+  -g  Get key map stored at given index, write to file.\n\
+  -k  Write key map at given index to the keyboard.\n\
+  -d  Delete key map at given index in the keyboard.\n\
+  -f  Specify the name of the file to be read or written.\n\
+  -i  Key map index, where index 1 is the first user-defined key map.\n\
+  -r  Reset keyboard controller.\n\
+  -n  Select keyboard number if there is more than one.\n\
+  -V  Show version information.\n\
+  -h  This help screen.\n\
+\n\
+No options: print basic hardware information and all key maps.\n",
+    progname,progname,progname,progname,progname,progname);
+}
+
+static void version_info(void)
+{
+  printf("kbuptool is part of " PACKAGE_STRING ".\n\
+Copyright (C) 2009, 2010  Robert Homann.\n\
+Please send feedback or bug reports to " PACKAGE_BUGREPORT ".\n\
+\n\
+This program is free software; you can redistribute it and/or modify it under\n\
+the terms of the GNU General Public License as published by the Free Software\n\
+Foundation; either version 2, or (at your option) any later version.\n\
+\n\
+This program is distributed in the hope that it will be useful, but WITHOUT\n\
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS\n\
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\
+You should have received a copy of the GNU General Public License along with\n\
+this program (see the file COPYING); if not, write to the Free Software\n\
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.\n");
+}
+
+typedef enum
+{
+  MODE_SHOW_STATUS=0,
+  MODE_DLOAD_LAYOUT,
+  MODE_DLOAD_KEYMAP,
+  MODE_UPLOAD_KEYMAP,
+  MODE_DELETE_KEYMAP,
+  MODE_RESET
+} Progmode;
+
+typedef struct
+{
+  Progmode mode;
+  char *filename;
+  ssize_t keyboard_index;
+  int keymap_index;
+} Options;
+
+#define SET_MODE_ONCE(MODE)\
+{\
+  if(opts->mode != MODE_SHOW_STATUS)\
+  {\
+    fprintf(stderr,"Invalid combination of options. Try -h.\n");\
+    return -1;\
+  }\
+  opts->mode=(MODE);\
+}
+
+static int commandline(int argc, char *argv[], Options *opts)
+{
+  opts->mode=MODE_SHOW_STATUS;
+  opts->filename=NULL;
+  opts->keyboard_index=-1;
+  opts->keymap_index=-1;
+
+  for(int ret=0; ret != -1; /* nothing */)
+  {
+    ret=getopt(argc,argv,"df:ghi:kln:rV");
+    switch(ret)
+    {
+     case -1:
+      break;
+     case '?':
+     case ':':
+      fprintf(stderr,"Use -h for help.\n");
+      return -1;
+     case 'd':
+      SET_MODE_ONCE(MODE_DELETE_KEYMAP);
+      break;
+     case 'f':
+      opts->filename=optarg;
+      break;
+     case 'g':
+      SET_MODE_ONCE(MODE_DLOAD_KEYMAP);
+      break;
+     case 'h':
+      return 1;
+     case 'i':
+      opts->keymap_index=atoi(optarg);
+      if(opts->keymap_index < 0)
+      {
+        fprintf(stderr,"Error: key map index cannot be negative.\n");
+        return -1;
+      }
+      break;
+     case 'k':
+      SET_MODE_ONCE(MODE_UPLOAD_KEYMAP);
+      break;
+     case 'l':
+      SET_MODE_ONCE(MODE_DLOAD_LAYOUT);
+      break;
+     case 'n':
+      opts->keyboard_index=atoi(optarg);
+      if(opts->keyboard_index <= 0)
+      {
+        fprintf(stderr,"Error: keyboard number must be greater than 0.\n");
+        return -1;
+      }
+      break;
+     case 'r':
+      SET_MODE_ONCE(MODE_RESET);
+      break;
+     case 'V':
+      return 2;
+     default:
+      fprintf(stderr,"Error parsing command line. Use -h for help.\n");
+      return -1;
+    }
+  }
+
+  if(optind < argc)
+  {
+    int multiple=(argc-optind > 1);
+    fprintf(stderr,"Invalid option%s:",multiple?"s":"");
+    if(multiple)
+    {
+      fputc('\n',stderr);
+      while(optind < argc) fprintf(stderr,"  %s\n",argv[optind++]);
+    }
+    else fprintf(stderr," %s\n",argv[optind]);
+    return -1;
+  }
+
+  switch(opts->mode)
+  {
+   case MODE_DLOAD_LAYOUT: case MODE_DLOAD_KEYMAP: case MODE_UPLOAD_KEYMAP:
+    if(opts->filename == NULL)
+    {
+      fprintf(stderr,"No file name specified. Try -f.\n");
+      return -1;
+    }
+    break;
+   default:
+    break;
+  }
+
+  switch(opts->mode)
+  {
+   case MODE_DLOAD_KEYMAP: case MODE_UPLOAD_KEYMAP: case MODE_DELETE_KEYMAP:
+    if(opts->keymap_index < 0)
+    {
+      fprintf(stderr,"No key map specified. Try -i.\n");
+      return -1;
+    }
+    break;
+   default:
+    break;
+  }
+
+  return 0;
 }
 
 int main(int argc, char *argv[])
 {
+  Options opts;
+
+  switch(commandline(argc,argv,&opts))
+  {
+   case 1:
+    usage(argv[0]);
+    return EXIT_SUCCESS;
+   case 2:
+    version_info();
+    return EXIT_SUCCESS;
+   case -1:
+    return EXIT_FAILURE;
+   default:
+    break;
+  }
+
   USBKeyboard kb;
   int ret;
 
-  if((ret=kb_get_device(&kb,-1)) != 0)
+  if(opts.keyboard_index > 0) --opts.keyboard_index;
+  if((ret=kb_get_device(&kb,opts.keyboard_index)) != 0)
   {
     if(ret == 1) fprintf(stderr,"\nUse option -n to select a keyboard.\n");
     return EXIT_FAILURE;
@@ -321,36 +508,40 @@ int main(int argc, char *argv[])
 
   ret=EXIT_FAILURE;
   int try_close_device=1;
-
   KBHwinfo info;
+
   if(kb_claim_device(&kb) == 0 &&
      receive_buffer(&kb,KURQ_GET_HWINFO,0,0,
                     &info,sizeof(KBHwinfo)) == sizeof(KBHwinfo))
   {
-    /* lame command line handling, should use getopt() */
     int temp=-1;
-    if(argc == 1)
+
+    switch(opts.mode)
     {
+     case MODE_SHOW_STATUS:
       temp=show_status(&kb,&info);
-    }
-    else
-    {
-      if(argc == 3 && strcmp(argv[1],"-l") == 0)
-        temp=download_layout(&kb,&info,argv[2]);
-      else if(argc == 4 && strcmp(argv[1],"-g") == 0)
-        temp=download_keymap(&kb,&info,argv[2],atoi(argv[3]));
-      else if(argc == 4 && strcmp(argv[1],"-k") == 0)
-        temp=upload_keymap(&kb,&info,argv[2],atoi(argv[3]));
-      else if(argc == 3 && strcmp(argv[1],"-d") == 0)
-        temp=delete_keymap(&kb,&info,atoi(argv[2]));
-      else if(argc == 2 && strcmp(argv[1],"-r") == 0)
-      {
-        /* sending will fail, so we'll fake success */
-        libusb_control_transfer(kb.handle,REQ_OUT,KURQ_RESET,0,0,NULL,0,5000);
-        temp=0;
-        try_close_device=0;
-      }
-      else usage(argv[0]);
+      break;
+     case MODE_DLOAD_LAYOUT:
+      temp=download_layout(&kb,&info,opts.filename);
+      break;
+     case MODE_DLOAD_KEYMAP:
+      temp=download_keymap(&kb,&info,opts.filename,opts.keymap_index);
+      break;
+     case MODE_UPLOAD_KEYMAP:
+      temp=upload_keymap(&kb,&info,opts.filename,opts.keymap_index);
+      break;
+     case MODE_DELETE_KEYMAP:
+      temp=delete_keymap(&kb,&info,opts.keymap_index);
+      break;
+     case MODE_RESET:
+      /* sending will fail, so we'll fake success */
+      libusb_control_transfer(kb.handle,REQ_OUT,KURQ_RESET,0,0,NULL,0,5000);
+      temp=0;
+      try_close_device=0;
+      break;
+     default:
+      usage(argv[0]);
+      break;
     }
 
     if(temp == 0) ret=EXIT_SUCCESS;

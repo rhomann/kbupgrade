@@ -202,7 +202,7 @@ AC_SUBST([LIBUSB0LIBS])
 AC_SUBST([LIBUSB1LIBS])
 
 # Checks for header files.
-AC_CHECK_HEADERS([inttypes.h stdlib.h string.h])
+AC_CHECK_HEADERS([inttypes.h stdlib.h string.h getopt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
