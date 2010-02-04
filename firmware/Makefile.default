@@ -38,7 +38,7 @@ main.hex: main$(EXEEXT)
 boot.hex: boot$(EXEEXT)
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
 
-MATRIXFILES=keyboard.h keymapdecoder.h stdmap.h
+MATRIXFILES=kbserial.h keyboard.h keymapdecoder.h stdmap.h
 SOURCES=main.c $(VUSBDIR)/usbdrv/usbdrv.c $(VUSBDIR)/usbdrv/usbdrvasm.S $(VUSBDIR)/usbdrv/oddebug.c
 
 BUILT_SOURCES=matrixfiles.stamp file_id.diz
@@ -48,9 +48,10 @@ EXTRA_DIST=README
 
 matrixfiles.stamp: $(PROCMATRIX) $(MATRIXDEF)
 	rm -f $@
-	$(PROC) -k keyboard.h -c keymapdecoder.h -h stdmap.h
+	$(PROC) -k keyboard.h -c keymapdecoder.h -h stdmap.h -u kbserial.h
 	touch $@
 
+kbserial.h: matrixfiles.stamp
 keyboard.h: matrixfiles.stamp
 keymapdecoder.h: matrixfiles.stamp
 stdmap.h: matrixfiles.stamp

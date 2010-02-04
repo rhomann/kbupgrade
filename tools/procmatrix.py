@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #
 # Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
-# Copyright (C) 2009  Robert Homann
+# Copyright (C) 2009, 2010  Robert Homann
 #
 # This file is part of the Keyboard Upgrade package.
 #
@@ -417,6 +417,11 @@ typedef """+colstatetype+""" Columnstate;
 #endif /* !"""+guard+""" */
 """)
 
+def write_kbserial_header(file,options):
+  file.write("""\
+#define USB_CFG_SERIAL_NUMBER      '"""+"','".join(options.kbdef.name)+"""'
+#define USB_CFG_SERIAL_NUMBER_LEN  """+str(len(options.kbdef.name))+'\n')
+
 def canonic_name_detrash(name):
   name=canonic_keycode_name(name)
   if name == 'KEY_trash': return '0'
@@ -531,6 +536,8 @@ Usage: """ + sys.argv[0] + """ -d <matrix definition file> [more options]
            times for cumulated effect.
   -k file  Write a header file containing some standard definitions describing
            the keyboard.
+  -u file  Write a header file containing the USB serial string (which is set
+           to the name of the keyboard).
   -h file  Write C definition of the key map as stored in EEPROM.
   -M file  Write binary key map file.
   -n str   Short descriptive name of the generated key map (written to the
@@ -553,7 +560,7 @@ Usage: """ + sys.argv[0] + """ -d <matrix definition file> [more options]
 
 def main():
   try:
-    opts, args=getopt.getopt(sys.argv[1:],"c:d:h:H:k:m:M:n:N:p:PsSU:x")
+    opts, args=getopt.getopt(sys.argv[1:],"c:d:h:H:k:m:M:n:N:p:PsSu:U:x")
   except getopt.GetoptError as err:
     print(err)
     usage()
@@ -566,6 +573,7 @@ def main():
   header_file_expanded=None
   decoder_header_file=None
   keyboard_header_file=None
+  keyboard_serial_file=None
   keymap_binfile=None
   permutation_file=None
   show_matrix=False
@@ -600,6 +608,8 @@ def main():
     elif o == "-S":
       show_matrix=True
       simple_matrix=False
+    elif o == "-u":
+      keyboard_serial_file=a
     elif o == "-U":
       usbkeycode_file=a
     elif o == "-x":
@@ -634,6 +644,7 @@ def main():
   if show_matrix: show_matrix_layout(kbdef,simple_matrix)
 
   new_file(keyboard_header_file,write_common_header,options)
+  new_file(keyboard_serial_file,write_kbserial_header,options)
   new_file(decoder_header_file,write_matrix_bitvector,options)
   new_file(header_file_stored,write_stored_definition,options)
   new_file(header_file_expanded,write_expanded_definition,options)
