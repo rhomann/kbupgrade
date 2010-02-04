@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -292,16 +292,18 @@ static int delete_keymap(USBKeyboard *kb, const KBHwinfo *info, int mapindex)
 static void usage(const char *progname)
 {
   fprintf(stderr,
-          "Usage: %s -l filename\n"
-          "       %s -g filename index\n"
-          "       %s -k filename index\n"
-          "       %s -d index\n"
+          "Usage: %s [-n num] -l filename\n"
+          "       %s [-n num] -g filename index\n"
+          "       %s [-n num] -k filename index\n"
+          "       %s [-n num] -d index\n"
+          "       %s [-n num] -r\n"
           "\nOptions:\n"
           "-l  Get keyboard layout, write to file.\n"
           "-g  Get key map stored at given index, write to file.\n"
           "-k  Write key map at given index.\n"
           "-d  Delete key map at given index.\n"
           "-r  Reset keyboard controller.\n"
+          "-n  Select keyboard if there is more than one.\n"
           "No option: print basic hardware information and all key maps.\n",
           progname,progname,progname,progname);
 }
@@ -309,10 +311,16 @@ static void usage(const char *progname)
 int main(int argc, char *argv[])
 {
   USBKeyboard kb;
-  int ret=EXIT_FAILURE;
-  int try_close_device=1;
+  int ret;
 
-  if(kb_get_device(&kb) == -1) return EXIT_FAILURE;
+  if((ret=kb_get_device(&kb,-1)) != 0)
+  {
+    if(ret == 1) fprintf(stderr,"\nUse option -n to select a keyboard.\n");
+    return EXIT_FAILURE;
+  }
+
+  ret=EXIT_FAILURE;
+  int try_close_device=1;
 
   KBHwinfo info;
   if(kb_claim_device(&kb) == 0 &&

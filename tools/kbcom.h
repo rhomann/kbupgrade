@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -34,7 +34,7 @@ typedef struct
 
 const char *usberror_to_string(enum libusb_error err);
 
-int kb_get_device(USBKeyboard *kb);
+int kb_get_device(USBKeyboard *kb, ssize_t keyboard_index);
 int kb_claim_device(USBKeyboard *kb);
 void kb_close_device(USBKeyboard *kb);
 #endif /* !KBCOM_H */
