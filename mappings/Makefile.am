@@ -2,6 +2,11 @@ EXTRA_DIST=\
  caps_ctrl_swap.map\
  caps_is_backspace.map\
  caps_is_ctrl.map\
+ carpalx_full.map\
+ carpalx_full_keep_ZXCV.map\
+ carpalx_full_letters_only.map\
+ carpalx_partial10.map\
+ carpalx_partial5.map\
  colemak.map\
  dvorak.map\
  no_winkeys.map\

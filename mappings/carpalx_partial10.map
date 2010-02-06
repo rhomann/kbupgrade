@@ -1,0 +1,17 @@
+# Partially optimized Carpalx layout with 10 swaps (QWYRFM)
+KEY_E		KEY_Y
+KEY_T		KEY_F
+KEY_Y		KEY_M
+KEY_U		KEY_L
+KEY_I		KEY_U
+KEY_O		KEY_B
+KEY_A		KEY_D
+KEY_D		KEY_A
+KEY_F		KEY_T
+KEY_G		KEY_N
+KEY_J		KEY_O
+KEY_K		KEY_E
+KEY_L		KEY_I
+KEY_B		KEY_J
+KEY_N		KEY_G
+KEY_M		KEY_K

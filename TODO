@@ -1,5 +1,3 @@
-* Add Carpalx mapping.
-
 * We may want to make use of usbConfiguration (see usbdrv.h).
 
 * USB_CFG_IMPLEMENT_HALT should be set to 1. What are the implications?

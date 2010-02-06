@@ -1,0 +1,22 @@
+# Fully optimized Carpalx layout with only the letters exchanged (QFMLWY)
+KEY_W		KEY_F
+KEY_E		KEY_M
+KEY_R		KEY_L
+KEY_T		KEY_W
+KEY_I		KEY_O
+KEY_O		KEY_B
+KEY_P		KEY_J
+KEY_A		KEY_D
+KEY_D		KEY_T
+KEY_F		KEY_N
+KEY_G		KEY_R
+KEY_H		KEY_I
+KEY_J		KEY_A
+KEY_K		KEY_E
+KEY_L		KEY_H
+KEY_X		KEY_V
+KEY_C		KEY_G
+KEY_V		KEY_C
+KEY_B		KEY_X
+KEY_N		KEY_P
+KEY_M		KEY_K

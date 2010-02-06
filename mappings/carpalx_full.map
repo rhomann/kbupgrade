@@ -1,0 +1,23 @@
+# Fully optimized Carpalx layout (QGMLWB)
+KEY_W		KEY_G
+KEY_E		KEY_M
+KEY_R		KEY_L
+KEY_T		KEY_W
+KEY_Y		KEY_B
+KEY_U		KEY_Y
+KEY_I		KEY_U
+KEY_O		KEY_V
+KEY_P		KEY_smcol
+KEY_A		KEY_D
+KEY_D		KEY_T
+KEY_F		KEY_N
+KEY_G		KEY_R
+KEY_H		KEY_I
+KEY_J		KEY_A
+KEY_K		KEY_E
+KEY_L		KEY_O
+KEY_smcol	KEY_H
+KEY_V		KEY_F
+KEY_B		KEY_J
+KEY_N		KEY_K
+KEY_M		KEY_P
