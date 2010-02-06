@@ -1,3 +1,5 @@
+# More convenient layout of the 9-cluster above the arrow keys on the
+# IBM RT3200 (Space Saver II).
 KEY_PrtScr	KEY_ins
 KEY_scrlck	KEY_home
 KEY_break	KEY_pgup
