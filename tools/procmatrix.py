@@ -25,10 +25,11 @@ import getopt
 import sys
 import re
 import string
+import os.path
 
 class Defaults:
   keymap_varname="standard_stored_keymap"
-  usbkeycode_file="usbkeycodes.h"
+  usbkeycode_files=["usbkeycodes.h","firmware/common/usbkeycodes.h"]
 
 class GenOptions:
   def __init__(this):
@@ -530,7 +531,7 @@ Read keyboard matrix definition, generate various files.
 Usage: """ + sys.argv[0] + """ -d <matrix definition file> [more options]
   -d file  Name of a file containing a keyboard matrix definition.
   -U file  Read keycode names from enumeration stored in the given file
-           (default: \""""+Defaults.usbkeycode_file+"""\").
+           (default: \""""+Defaults.usbkeycode_files[0]+"""\").
   -m file  Optional key re-mappings to be applied to the selected matrix in
            order to obtain a custom key map. This option can be given multiple
            times for cumulated effect.
@@ -577,7 +578,7 @@ def main():
   keymap_binfile=None
   permutation_file=None
   show_matrix=False
-  usbkeycode_file=Defaults.usbkeycode_file
+  usbkeycode_file=None
   for o, a in opts:
     if o == "-d":
       matrix_def_file=a
@@ -618,6 +619,16 @@ def main():
       assert False, "unhandled option "+o
 
   if not matrix_def_file: usage()
+
+  if not usbkeycode_file:
+    for name in Defaults.usbkeycode_files:
+      if os.path.isfile(name):
+        usbkeycode_file=name
+        break
+
+    # If there is no such file, then take the first one anyway. Will fail below
+    # with a more or less readable error message.
+    if not usbkeycode_file: usbkeycode_file=Defaults.usbkeycode_files[0]
 
   with open(usbkeycode_file) as file:
     valid_keycodes, numkeys, nummods=read_keycode_enumeration(file)
