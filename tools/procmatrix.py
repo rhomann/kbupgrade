@@ -486,17 +486,20 @@ def read_remappings(files,valid_keycodes):
   mappings={}
   for filename in files:
     print("Loading mappings from "+filename)
+
     with open(filename) as file:
+      more_mappings={}
       for line in file:
         line=line.lstrip().rstrip()
         if line and line[0] != "#":
           line=re.split("[ \t]+",line)
           if len(line) != 2: error("Invalid mapping: "+str(line)+".")
-          if line[0] in mappings:
-            error("Key "+line[0]+" has been re-mapped already.")
           assert_valid_keycode(line[0],valid_keycodes,filename)
           assert_valid_keycode(line[1],valid_keycodes,filename)
-          mappings[line[0]]=line[1]
+          if line[1] in mappings: line[1]=mappings[line[1]]
+          more_mappings[line[0]]=line[1]
+
+      for m in more_mappings.keys(): mappings[m]=more_mappings[m]
 
   if mappings != {}: return mappings
   return None
