@@ -56,8 +56,14 @@ keyboard.h: matrixfiles.stamp
 keymapdecoder.h: matrixfiles.stamp
 stdmap.h: matrixfiles.stamp
 
-file_id.diz:
+file_id.diz: Makefile
 	@echo "$(PACKAGE_STRING)" > $@
+	@echo 'Copyright (C) 2009, 2010  Robert Homann' >> $@
+	@echo 'Published under the terms of the GNU General Public License Version 2.' >> $@
+	@echo 'This firmware is distributed in the hope that it will be useful, but WITHOUT ANY' >> $@
+	@echo 'WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A' >> $@
+	@echo 'PARTICULAR PURPOSE. See the GNU General Public License for more details.' >> $@
+	@echo '' >> $@
 	@echo $(ECHO_N) 'Firmware image for ' >> $@
 	@grep '^Device' $(MATRIXDEF) | sed 's/^\w\+\W\+//' >> $@
 	@echo "$(PACKAGE_BUGREPORT)" >> $@
