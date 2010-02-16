@@ -14,6 +14,7 @@ EXTRA_DIST=\
  ESDF_arrows.map\
  ESDF_arrows_and_more.map\
  ext_function_keys.map\
+ HJKL_arrows.map\
  no_winkeys.map\
  rt3200_9block.map\
  tarmak1.map\
