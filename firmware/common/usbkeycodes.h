@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * Based on RUMP (http://mg8.org/rump/), Copyright (C) 2008  Chris Lee
  *
@@ -262,8 +262,11 @@ enum keycodes {
   MOD_RALT,                   /* 0x40 */
   MOD_RGUI,                   /* 0x80 */
 
+  /* Pseudo key for the function key, independent of active key map. */
+  KEY_function,
+
   /* This pseudo key is used to deactivate real keys in mappings. */
-  KEY_trash
+  KEY_trash=0xff
 };
 
 #endif /* USBKEYCODES_H */

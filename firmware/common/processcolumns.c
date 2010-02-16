@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -66,6 +66,19 @@ static uint8_t ghost_keys_present(void)
 #endif /* !NO_GHOSTKEY_PREVENTION */
 
 /*
+ * Look up key code in current key map corresponding to given row and column,
+ * but return KEY_function in case the function key has been pressed.
+ */
+static uint8_t row_column_to_key(uint8_t row, uint8_t column, char raw)
+{
+  if(!raw &&
+     row == eeprom_read_byte(&CONFIG_POINTER->fnkey_row) &&
+     column == eeprom_read_byte(&CONFIG_POINTER->fnkey_column))
+    return KEY_function;
+  return current_keymap.mat[row][column];
+}
+
+/*
  * Update the usb_report_buffer using the column states stored in
  * column_states. This function also avoids ghost key constellations.
  */
@@ -82,6 +95,7 @@ static Mode process_columns(void)
 #endif /* !NO_GHOSTKEY_PREVENTION */
 
   uint8_t num_of_keys=0;
+  Mode retval=MODE_NORMAL;
   for(uint8_t row=0; row < NUM_OF_ROWS; ++row)
   {
     Columnstate state=column_states[row];
@@ -90,7 +104,7 @@ static Mode process_columns(void)
     for(uint8_t col=0; col < NUM_OF_COLUMNS; ++col, state>>=1)
     {
       uint8_t key;
-      if((state&1) || (key=current_keymap.mat[row][col]) == 0) continue;
+      if((state&1) || (key=row_column_to_key(row,col,0)) == 0) continue;
 
       /* column got activated, and the key should not be ignored */
       if(key < NOKEY_Modifiers)
@@ -110,9 +124,12 @@ static Mode process_columns(void)
         else
         {
           /* command key pressed, enter command mode */
-          memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
-          return MODE_ENTER_COMMAND;
+          MODE_TRANSITION(retval,MODE_ENTER_COMMAND);
         }
+      }
+      else if(key == KEY_function)
+      {
+        retval|=MODE_WITH_FUNCTION;
       }
       else
       {
@@ -121,5 +138,8 @@ static Mode process_columns(void)
     }
   }
 
-  return MODE_NORMAL;
+  if((retval&MODE_CMDMASK) == MODE_ENTER_COMMAND)
+    memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
+
+  return retval;
 }
