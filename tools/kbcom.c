@@ -217,7 +217,7 @@ static ssize_t filter_device_list(libusb_device **list, ssize_t len,
       if(ret != 0)
       {
         fprintf(stderr,"Could not open device: %s\n",usberror_to_string(ret));
-        goto exit_error;
+        goto exit_early_error;
       }
 
       int conf;
