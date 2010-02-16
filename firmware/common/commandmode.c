@@ -32,16 +32,12 @@ static uint8_t process_command(uint8_t key)
    case CMDMODE_ENTER_KEY:
     /* go back to normal mode, emit the keystroke for the command mode key */
     return 1;
-   case KEY_1:
-   case KEY_2:
-   case KEY_3:
-   case KEY_4:
-   case KEY_5:
-   case KEY_6:
-   case KEY_7:
-   case KEY_8:
-   case KEY_9:
-   case KEY_0:
+   case KEY_F1: case KEY_F2: case KEY_F3: case KEY_F4: case KEY_F5:
+   case KEY_F6: case KEY_F7: case KEY_F8: case KEY_F9: case KEY_F10:
+    key=key-KEY_F1+KEY_1;
+    /* fall through */
+   case KEY_1: case KEY_2: case KEY_3: case KEY_4: case KEY_5:
+   case KEY_6: case KEY_7: case KEY_8: case KEY_9: case KEY_0:
     /* set key map 0..9 */
     if(key == KEY_0) temp=0;
     else             temp=key-KEY_1+1;
@@ -74,16 +70,12 @@ static uint8_t process_fnkey_command(uint8_t key)
    case CMDMODE_ENTER_KEY:
     /* go back to normal mode, emit the keystroke for the command mode key */
     return 1;
-   case KEY_1:
-   case KEY_2:
-   case KEY_3:
-   case KEY_4:
-   case KEY_5:
-   case KEY_6:
-   case KEY_7:
-   case KEY_8:
-   case KEY_9:
-   case KEY_0:
+   case KEY_F1: case KEY_F2: case KEY_F3: case KEY_F4: case KEY_F5:
+   case KEY_F6: case KEY_F7: case KEY_F8: case KEY_F9: case KEY_F10:
+    key=key-KEY_F1+KEY_1;
+    /* fall through */
+   case KEY_1: case KEY_2: case KEY_3: case KEY_4: case KEY_5:
+   case KEY_6: case KEY_7: case KEY_8: case KEY_9: case KEY_0:
     /* set key map 0..9 */
     if(key == KEY_0) temp=0;
     else             temp=key-KEY_1+1;

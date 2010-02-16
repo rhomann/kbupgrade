@@ -173,9 +173,11 @@ Command keys:
 Escape      Exit command mode, do nothing.
 SL          Emit Scroll Lock. Hit SL four times in a row if your KVM switch
             requires SL being hit twice for being activated.
-0, ..., 9   Activate corresponding key map. Key map 0 is a fixed key map that
+0,...,9     Activate corresponding key map. Key map 0 is a fixed key map that
             is built into the firmware image. The selected key map index is
             stored on EEPROM and loaded when the keyboard gets plugged in.
+F1,...,F10  Same as digit keys 0 through 9, where F1 corresponds to key map 1,
+            F2 to key map 2, and F10 to key map 0.
 F k         Select the function key, where k may be any key except SL and
             Escape. A typical choice for the function key on a regular
             101/102-key keyboard would be Right CTRL, Right Alt, or Right
@@ -191,7 +193,9 @@ held down) will perform an action in FN command mode.
 FN command keys:
 Escape      Turn FN back into a normal key so that the function key will not be
             available afterwards. Use the F command to define FN if necessary.
-0, ..., 9   Assign corresponding key map to the function key.
+0,...,9     Assign corresponding key map to the function key.
+F1,...,F10  Same as digit keys 0 through 9, where F1 corresponds to key map 1,
+            F2 to key map 2, and F10 to key map 0.
 
 
 Have fun!
