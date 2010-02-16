@@ -11,14 +11,14 @@ EXTRA_DIST=\
  colemak.map\
  digit_function_keys.map\
  dvorak.map\
- esdf_arrows.map\
- esdf_arrows_and_more.map\
+ ESDF_arrows.map\
+ ESDF_arrows_and_more.map\
  ext_function_keys.map\
  no_winkeys.map\
  rt3200_9block.map\
  tarmak1.map\
  tarmak2.map\
  virtual_numpad.map\
- wasd_arrows.map\
- wasd_arrows_and_more.map\
+ WASD_arrows.map\
+ WASD_arrows_and_more.map\
  ZXCVB_ergoshift_ISO.map
