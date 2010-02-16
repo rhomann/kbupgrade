@@ -160,8 +160,8 @@ result of uploading and activating broken key map data. Check the schematic of
 your controller or the README file in the directory containing the schematic to
 find out the jumper's location.
 
-_                  _
-=== Command Mode ===
+_                   _
+=== Command Modes ===
 
 Hit the Scroll Lock (SL) key to activate command mode; the Scroll Lock LED will
 be toggled to indicate that command mode has been entered. After entering
@@ -176,6 +176,22 @@ SL          Emit Scroll Lock. Hit SL four times in a row if your KVM switch
 0, ..., 9   Activate corresponding key map. Key map 0 is a fixed key map that
             is built into the firmware image. The selected key map index is
             stored on EEPROM and loaded when the keyboard gets plugged in.
+F k         Select the function key, where k may be any key except SL and
+            Escape. A typical choice for the function key on a regular
+            101/102-key keyboard would be Right CTRL, Right Alt, or Right
+            Shift.
+
+The function key (FN) selected by the F command temporarily activates the key
+map that was assigned to it, keeping it activated as long as FN is being
+depressed. For programming the function key, hit SL while holding down FN in
+order to enter the function key's command mode, and keep FN depressed after
+hitting SL. Just like in normal command mode, the next keystroke (with FN still
+held down) will perform an action in FN command mode.
+
+FN command keys:
+Escape      Turn FN back into a normal key so that the function key will not be
+            available afterwards. Use the F command to define FN if necessary.
+0, ..., 9   Assign corresponding key map to the function key.
 
 
 Have fun!
