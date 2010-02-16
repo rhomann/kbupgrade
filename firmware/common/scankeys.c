@@ -46,10 +46,10 @@ static char wait_no_keys(uint8_t fnkey)
     {
       /* if necessary, ignore the FN key if it was depressed at the time when
        * the command key was hit */
-      if(fnkey == 0 ||
-         row != eeprom_read_byte(&CONFIG_POINTER->fnkey_row) ||
+      if(fnkey == 0) return 0;
+      if(row != eeprom_read_byte(&CONFIG_POINTER->fnkey_row) ||
          column_states[row] !=
-           ~((Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey_column)))
+           (Columnstate)~((Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey_column)))
         return 0;
     }
   }
