@@ -17,6 +17,7 @@ EXTRA_DIST=\
  HJKL_arrows.map\
  no_winkeys.map\
  rt3200_9block.map\
+ tab_is_caps.map\
  tarmak1.map\
  tarmak2.map\
  virtual_numpad.map\
