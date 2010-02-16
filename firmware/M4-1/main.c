@@ -133,7 +133,7 @@ static void setup(void)
   _delay_ms(50);
   set_led_state(0);
 
-  set_current_keymap(get_current_keymap_index());
+  set_current_keymap(get_current_keymap_index(0),1);
 
   _delay_ms(100);
   set_led_state(LED_SCROLL);

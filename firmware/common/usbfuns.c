@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * Based on RUMP (http://mg8.org/rump/), Copyright (C) 2008  Chris Lee
  *
@@ -93,7 +93,7 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
   {
    case KURQ_GET_HWINFO:
     ((KBHwinfo *)buffer)->max_mapindex=MAXIMUM_KEYMAP_INDEX;
-    ((KBHwinfo *)buffer)->current_mapindex=get_current_keymap_index();
+    ((KBHwinfo *)buffer)->current_mapindex=get_current_keymap_index(0);
     ((KBHwinfo *)buffer)->num_of_keys=NUM_OF_KEYS;
     ((KBHwinfo *)buffer)->num_of_rows=NUM_OF_ROWS;
     ((KBHwinfo *)buffer)->num_of_cols=NUM_OF_COLUMNS;

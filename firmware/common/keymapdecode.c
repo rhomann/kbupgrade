@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -90,7 +90,7 @@ static void decode(Map *map, const uint8_t *src, uint8_t from_eeprom)
 }
 
 #ifdef __AVR_ARCH__
-static uint8_t get_current_keymap_index(void)
+static uint8_t get_current_keymap_index(uint8_t fnkey)
 {
   if(!(CFG_KEYMAP0_PORT&_BV(CFG_KEYMAP0_PIN)))
   {
@@ -98,13 +98,24 @@ static uint8_t get_current_keymap_index(void)
     return 0;
   }
 
-  return eeprom_read_byte(&CONFIG_POINTER->current_keymap_index);
+  if(fnkey == 0)
+    return eeprom_read_byte(&CONFIG_POINTER->current_keymap_index);
+  else
+    return eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index);
 }
 
-static void write_current_keymap_index(uint8_t idx)
+static void write_current_keymap_index(uint8_t fnkey, uint8_t idx)
 {
-  if(eeprom_read_byte(&CONFIG_POINTER->current_keymap_index) != idx)
-    eeprom_write_byte(&CONFIG_POINTER->current_keymap_index,idx);
+  if(fnkey == 0)
+  {
+    if(eeprom_read_byte(&CONFIG_POINTER->current_keymap_index) != idx)
+      eeprom_write_byte(&CONFIG_POINTER->current_keymap_index,idx);
+  }
+  else
+  {
+    if(eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index) != idx)
+      eeprom_write_byte(&CONFIG_POINTER->fnkey_keymap_index,idx);
+  }
 }
 
 static const void *get_eeprom_keymap_pointer(uint8_t idx)
@@ -117,7 +128,7 @@ static const void *get_eeprom_keymap_pointer(uint8_t idx)
   return ptr+KEYMAP_NAME_LENGTH;
 }
 
-static void set_current_keymap(uint8_t idx)
+static void set_current_keymap(uint8_t idx, char permanent_switch)
 {
   const uint8_t *mapptr=KEYMAP_POINTER_NULL;
 
@@ -129,7 +140,7 @@ static void set_current_keymap(uint8_t idx)
     mapptr=standard_stored_keymap.codes;
   }
 
-  write_current_keymap_index(idx);
+  if(permanent_switch) write_current_keymap_index(0,idx);
   decode(&current_keymap,mapptr,idx);
 }
 #endif /* __AVR_ARCH__ */

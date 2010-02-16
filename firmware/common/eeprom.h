@@ -1,6 +1,6 @@
 /*
  * Keyboard Upgrade -- Firmware for homebrew computer keyboard controllers.
- * Copyright (C) 2009  Robert Homann
+ * Copyright (C) 2009, 2010  Robert Homann
  *
  * This file is part of the Keyboard Upgrade package.
  *
@@ -27,7 +27,10 @@
 typedef struct
 {
   uint8_t current_keymap_index;
-  uint8_t reserved[7];  /* reserve a few bytes for extensions */
+  uint8_t fnkey_row;
+  uint8_t fnkey_column;
+  uint8_t fnkey_keymap_index;
+  uint8_t reserved[4];  /* reserve a few bytes for extensions */
 } PersistentConfig;
 
 #define KEYMAP_POINTER_FROM_INDEX(I)  ((uint8_t *)sizeof(PersistentConfig)+\
