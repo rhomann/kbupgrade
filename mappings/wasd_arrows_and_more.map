@@ -1,0 +1,9 @@
+KEY_W		KEY_uarr
+KEY_A		KEY_larr
+KEY_S		KEY_darr
+KEY_D		KEY_rarr
+
+KEY_Q		KEY_home
+KEY_E		KEY_end
+KEY_R		KEY_pgup
+KEY_F		KEY_pgdn

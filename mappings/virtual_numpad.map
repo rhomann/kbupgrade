@@ -1,0 +1,19 @@
+KEY_7		KEY_KP7
+KEY_8		KEY_KP8
+KEY_9		KEY_KP9
+KEY_minus	KEY_KPminus
+KEY_equal	KEY_KPplus
+KEY_U		KEY_KP4
+KEY_I		KEY_KP5
+KEY_O		KEY_KP6
+KEY_J		KEY_KP1
+KEY_K		KEY_KP2
+KEY_L		KEY_KP3
+KEY_smcol	KEY_KPast
+KEY_M		KEY_KP0
+KEY_dot		KEY_KPdot
+KEY_slash	KEY_KPslash
+KEY_enter	KEY_KPenter
+
+# this is for keyboards that don't have a designated Num Lock key
+KEY_PrtScr	KEY_numlock

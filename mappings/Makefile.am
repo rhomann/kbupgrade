@@ -8,9 +8,14 @@ EXTRA_DIST=\
  carpalx_partial10.map\
  carpalx_partial5.map\
  colemak.map\
+ digit_function_keys.map\
  dvorak.map\
+ ext_function_keys.map\
  no_winkeys.map\
  rt3200_9block.map\
  tarmak1.map\
  tarmak2.map\
+ virtual_numpad.map\
+ wasd_arrows.map\
+ wasd_arrows_and_more.map\
  ZXCVB_ergoshift_ISO.map
