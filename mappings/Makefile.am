@@ -1,4 +1,5 @@
 EXTRA_DIST=\
+ 6cluster_media_keys.map\
  caps_ctrl_swap.map\
  caps_is_backspace.map\
  caps_is_ctrl.map\
