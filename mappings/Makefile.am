@@ -10,6 +10,8 @@ EXTRA_DIST=\
  colemak.map\
  digit_function_keys.map\
  dvorak.map\
+ esdf_arrows.map\
+ esdf_arrows_and_more.map\
  ext_function_keys.map\
  no_winkeys.map\
  rt3200_9block.map\
