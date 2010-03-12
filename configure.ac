@@ -156,7 +156,7 @@ PROGTOOL="$AVRDUDE"
 PROG="$prog"' -U flash:w:$<'
 PROGLOCK="$prog"' -U lock:w:$(LOCKFUSE):m'
 PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m'
-PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2> /dev/null'
+PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2>/dev/null'
 
 AC_SUBST([PROGTOOL])
 AC_SUBST([PROG])
