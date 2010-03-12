@@ -160,30 +160,30 @@ static uint8_t scankeys(void)
   {
    case MODE_NORMAL:
     {
-    uint8_t prev_fnkeys=current_fnkey_combination;
+      uint8_t prev_fnkeys=current_fnkey_combination;
 
-    if((mode=process_columns()) == MODE_NORMAL)
-    {
-      /* so we need to construct a USB report... */
-      if(current_fnkey_combination != prev_fnkeys)
+      if((mode=process_columns()) == MODE_NORMAL)
       {
-        /* function key state has toggled */
-        uint8_t temp=get_current_keymap_index(current_fnkey_combination);
+        /* so we need to construct a USB report... */
+        if(current_fnkey_combination != prev_fnkeys)
+        {
+          /* function key state has toggled */
+          uint8_t temp=get_current_keymap_index(current_fnkey_combination);
 
-        if(current_fnkey_combination)
-        {
-          if(temp != get_current_keymap_index(0))
-            set_current_keymap(temp,0);
+          if(current_fnkey_combination)
+          {
+            if(temp != get_current_keymap_index(0))
+              set_current_keymap(temp,0);
+          }
+          else
+          {
+            if(temp != get_current_keymap_index(prev_fnkeys))
+              set_current_keymap(temp,0);
+          }
         }
-        else
-        {
-          if(temp != get_current_keymap_index(prev_fnkeys))
-            set_current_keymap(temp,0);
-        }
+        return 1;
       }
-      return 1;
-    }
-    break;
+      break;
     }
    case MODE_ENTER_COMMAND:
    case MODE_LEAVE_COMMAND:
