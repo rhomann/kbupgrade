@@ -92,30 +92,20 @@ static void decode(Map *map, const uint8_t *src, uint8_t from_eeprom)
 #ifdef __AVR_ARCH__
 static uint8_t get_current_keymap_index(uint8_t fnkey)
 {
-  if(!(CFG_KEYMAP0_PORT&_BV(CFG_KEYMAP0_PIN)))
+  if(!(CFG_KEYMAP0_PORT&_BV(CFG_KEYMAP0_PIN)) || fnkey > 3)
   {
     /* locked at index 0 via jumper */
     return 0;
   }
 
-  if(fnkey == 0)
-    return eeprom_read_byte(&CONFIG_POINTER->current_keymap_index);
-  else
-    return eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1]);
+  return eeprom_read_byte(&CONFIG_POINTER->keymap_indices[fnkey]);
 }
 
 static void write_current_keymap_index(uint8_t fnkey, uint8_t idx)
 {
-  if(fnkey == 0)
-  {
-    if(eeprom_read_byte(&CONFIG_POINTER->current_keymap_index) != idx)
-      eeprom_write_byte(&CONFIG_POINTER->current_keymap_index,idx);
-  }
-  else
-  {
-    if(eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1]) != idx)
-      eeprom_write_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1],idx);
-  }
+  if(fnkey > 3) return;
+  if(eeprom_read_byte(&CONFIG_POINTER->keymap_indices[fnkey]) != idx)
+    eeprom_write_byte(&CONFIG_POINTER->keymap_indices[fnkey],idx);
 }
 
 static const void *get_eeprom_keymap_pointer(uint8_t idx)
