@@ -170,16 +170,8 @@ static uint8_t scankeys(void)
           /* function key state has toggled */
           uint8_t temp=get_current_keymap_index(current_fnkey_combination);
 
-          if(current_fnkey_combination)
-          {
-            if(temp != get_current_keymap_index(0))
-              set_current_keymap(temp,0);
-          }
-          else
-          {
-            if(temp != get_current_keymap_index(prev_fnkeys))
-              set_current_keymap(temp,0);
-          }
+          if(temp != get_current_keymap_index(prev_fnkeys))
+            set_current_keymap(temp,0);
         }
         return 1;
       }
