@@ -69,7 +69,7 @@ static uint8_t current_fnkey_combination;
 
 /*
  * Look up key code in current key map corresponding to given row and column,
- * but return KEY_function in case any function key has been pressed.
+ * but return NOKEY_function in case any function key has been pressed.
  */
 static uint8_t row_column_to_key(uint8_t row, uint8_t column, char raw)
 {
@@ -89,7 +89,7 @@ static uint8_t row_column_to_key(uint8_t row, uint8_t column, char raw)
     if(fnkeys)
     {
       current_fnkey_combination|=fnkeys;
-      return KEY_function;
+      return NOKEY_function;
     }
   }
 
@@ -147,7 +147,7 @@ static Mode process_columns(void)
           retval=MODE_ENTER_COMMAND;
         }
       }
-      else if(key != KEY_function)
+      else if(key != NOKEY_function)
       {
         usb_report_buffer.modifiers|=_BV(key&0x0f);
       }

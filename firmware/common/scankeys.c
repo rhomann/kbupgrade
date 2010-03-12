@@ -106,7 +106,7 @@ static char get_first_valid_fn_row_column(uint8_t *row, uint8_t *col)
       if((state&1) == 0)
       {
         uint8_t key=row_column_to_key(*row,*col,0);
-        if(key != KEY_function &&
+        if(key != NOKEY_function &&
            key != CMDMODE_ENTER_KEY && key != CMDMODE_ABORT_KEY) return 0;
       }
     }

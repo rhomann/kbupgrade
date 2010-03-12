@@ -263,7 +263,7 @@ enum keycodes {
   MOD_RGUI,                   /* 0x80 */
 
   /* Pseudo key for the function key, independent of active key map. */
-  KEY_function,
+  NOKEY_function=0xfe,
 
   /* This pseudo key is used to deactivate real keys in mappings. */
   KEY_trash=0xff
