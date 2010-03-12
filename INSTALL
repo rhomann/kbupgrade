@@ -178,24 +178,44 @@ SL          Emit Scroll Lock. Hit SL four times in a row if your KVM switch
             stored on EEPROM and loaded when the keyboard gets plugged in.
 F1,...,F10  Same as digit keys 0 through 9, where F1 corresponds to key map 1,
             F2 to key map 2, and F10 to key map 0.
-F k         Select the function key, where k may be any key except SL and
-            Escape. A typical choice for the function key on a regular
+F k         Select the primary function key, where k may be any key except SL
+            and Escape. A typical choice for the function key on a regular
             101/102-key keyboard would be Right CTRL, Right Alt, or Right
             Shift.
+G k         Select secondary function key.
 
-The function key (FN) selected by the F command temporarily activates the key
-map that was assigned to it, keeping it activated as long as FN is being
-depressed. For programming the function key, hit SL while holding down FN in
-order to enter the function key's command mode, and keep FN depressed after
-hitting SL. Just like in normal command mode, the next keystroke (with FN still
-held down) will perform an action in FN command mode.
+The function keys (FN1 and FN2) selected by the F and G commands temporarily
+activate the key map that was assigned to them, keeping the respective key map
+activated as long as the function key is being depressed. That is, FN1 and FN2
+make a secondary and tertiary layer of keys available. Pressing FN1 and FN2
+together activates yet a another, quaternary layer.
+
+For programming a function key, hit SL while holding down FN1, FN2, or both, in
+order to enter the function keys' command mode, and keep FN1/FN2 depressed
+after hitting SL. Just like in normal command mode, the next keystroke (with
+the function key(s) still held down) will perform an action in FN command mode.
 
 FN command keys:
-Escape      Turn FN back into a normal key so that the function key will not be
-            available afterwards. Use the F command to define FN if necessary.
+Escape      Turn the function key back into a normal key. If both function keys
+            are held down, both will be turned into normal keys. Use the F and
+            G commands to define FN1 and FN2 again.
 0,...,9     Assign corresponding key map to the function key.
 F1,...,F10  Same as digit keys 0 through 9, where F1 corresponds to key map 1,
             F2 to key map 2, and F10 to key map 0.
+
+Example for working with function keys:
+* Define Right Control as primary function key (FN1):
+  - enter the sequence SL, F, Right Control
+* Assign key map 3 to FN1:
+  - hold down Right Control
+  - enter the sequence SL, 3 (or F3)
+  - release Right Control
+  From now on, key map 3 will be active as long as Right Control is being held
+  down.
+* Revert Right Control to its original meaning:
+  - hold down Right Control
+  - enter the sequence SL, Escape
+  - release Right Control
 
 
 Have fun!
