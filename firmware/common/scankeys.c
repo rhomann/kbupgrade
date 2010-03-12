@@ -193,7 +193,7 @@ static uint8_t scankeys(void)
     {
       if(mode == MODE_ENTER_COMMAND)
       {
-        MODE_TRANSITION(mode,MODE_COMMAND);
+        mode=MODE_COMMAND;
 #ifdef LED_ONOFF
         scrlck_led_state=LED_PORT&LED_SCROLL;
         LED_ONOFF(SCROLL,~scrlck_led_state);
@@ -201,7 +201,7 @@ static uint8_t scankeys(void)
       }
       else
       {
-        MODE_TRANSITION(mode,MODE_NORMAL);
+        mode=MODE_NORMAL;
 #ifdef LED_ONOFF
         LED_ONOFF(SCROLL,scrlck_led_state);
 #endif /* LED_ONOFF */
@@ -222,7 +222,7 @@ static uint8_t scankeys(void)
     }
     break;
    case MODE_COMMAND:
-    MODE_TRANSITION(mode,MODE_LEAVE_COMMAND);
+    mode=MODE_LEAVE_COMMAND;
 
     uint8_t temp=get_command_key(current_fnkey_combination);
 
@@ -239,8 +239,8 @@ static uint8_t scankeys(void)
     }
     else if(temp > 1)
     {
-      /* command needs an argument; next mode is stored in temp */
-      MODE_TRANSITION(mode,temp);
+      /* command needs an argument; next mode is stored in temp already */
+      mode=temp;
     }
     break;
    case MODE_GET_FNKEY1:

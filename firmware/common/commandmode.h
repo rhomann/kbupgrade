@@ -31,8 +31,6 @@
 #define MODE_GET_FNKEY1             ((Mode)6)
 #define MODE_GET_FNKEY2             ((Mode)7)
 
-#define MODE_TRANSITION(VAR,MODE)  (VAR)=(MODE)
-
 #define CMDMODE_ENTER_KEY   KEY_scrlck
 #define CMDMODE_ABORT_KEY   KEY_esc
 

@@ -144,7 +144,7 @@ static Mode process_columns(void)
         else
         {
           /* command key pressed, enter command mode */
-          MODE_TRANSITION(retval,MODE_ENTER_COMMAND);
+          retval=MODE_ENTER_COMMAND;
         }
       }
       else if(key != KEY_function)
