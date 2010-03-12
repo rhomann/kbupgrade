@@ -1,5 +1,5 @@
 AC_PREREQ([2.63])
-AC_INIT([Keyboard Upgrade],[0.2.3],[kbupgrade@gmx.net])
+AC_INIT([Keyboard Upgrade],[0.3.0],[kbupgrade@gmx.net])
 AM_INIT_AUTOMAKE([-Wall silent-rules foreign])
 AC_CONFIG_SRCDIR([firmware/1391401/main.c])
 AC_CONFIG_HEADERS([config.h])
