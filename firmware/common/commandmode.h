@@ -26,14 +26,12 @@
 #define MODE_ENTER_COMMAND          ((Mode)1)
 #define MODE_COMMAND                ((Mode)2)
 #define MODE_LEAVE_COMMAND          ((Mode)3)
-#define MODE_GET_FNKEY_ENTER        ((Mode)4)
-#define MODE_GET_FNKEY              ((Mode)5)
-#define MODE_CMDMASK                ((Mode)0x0f)
+#define MODE_GET_FNKEY1_ENTER       ((Mode)4)
+#define MODE_GET_FNKEY2_ENTER       ((Mode)5)
+#define MODE_GET_FNKEY1             ((Mode)6)
+#define MODE_GET_FNKEY2             ((Mode)7)
 
-#define MODE_WITH_FUNCTION  ((Mode)0x80)
-#define MODE_FNMASK         ((Mode)0xf0)
-
-#define MODE_TRANSITION(VAR,MODE)  (VAR)=(((VAR)&MODE_FNMASK)|(MODE))
+#define MODE_TRANSITION(VAR,MODE)  (VAR)=(MODE)
 
 #define CMDMODE_ENTER_KEY   KEY_scrlck
 #define CMDMODE_ABORT_KEY   KEY_esc

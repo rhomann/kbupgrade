@@ -65,16 +65,34 @@ static uint8_t ghost_keys_present(void)
 }
 #endif /* !NO_GHOSTKEY_PREVENTION */
 
+static uint8_t current_fnkey_combination;
+
 /*
  * Look up key code in current key map corresponding to given row and column,
- * but return KEY_function in case the function key has been pressed.
+ * but return KEY_function in case any function key has been pressed.
  */
 static uint8_t row_column_to_key(uint8_t row, uint8_t column, char raw)
 {
-  if(!raw &&
-     row == eeprom_read_byte(&CONFIG_POINTER->fnkey_row) &&
-     column == eeprom_read_byte(&CONFIG_POINTER->fnkey_column))
-    return KEY_function;
+  if(!raw)
+  {
+    uint8_t fnkeys=0;
+
+    if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey1_row))
+    {
+      if(column == eeprom_read_byte(&CONFIG_POINTER->fnkey1_column)) fnkeys=1;
+    }
+    else if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey2_row))
+    {
+      if(column == eeprom_read_byte(&CONFIG_POINTER->fnkey2_column)) fnkeys=2;
+    }
+
+    if(fnkeys)
+    {
+      current_fnkey_combination|=fnkeys;
+      return KEY_function;
+    }
+  }
+
   return current_keymap.mat[row][column];
 }
 
@@ -93,6 +111,8 @@ static Mode process_columns(void)
 #ifndef NO_GHOSTKEY_PREVENTION
   else usb_report_buffer.modifiers=0;
 #endif /* !NO_GHOSTKEY_PREVENTION */
+
+  current_fnkey_combination=0;
 
   uint8_t num_of_keys=0;
   Mode retval=MODE_NORMAL;
@@ -127,18 +147,14 @@ static Mode process_columns(void)
           MODE_TRANSITION(retval,MODE_ENTER_COMMAND);
         }
       }
-      else if(key == KEY_function)
-      {
-        retval|=MODE_WITH_FUNCTION;
-      }
-      else
+      else if(key != KEY_function)
       {
         usb_report_buffer.modifiers|=_BV(key&0x0f);
       }
     }
   }
 
-  if((retval&MODE_CMDMASK) == MODE_ENTER_COMMAND)
+  if(retval == MODE_ENTER_COMMAND)
     memset(&usb_report_buffer,0,sizeof(usb_report_buffer));
 
   return retval;

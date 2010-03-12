@@ -44,12 +44,23 @@ static char wait_no_keys(uint8_t fnkey)
   {
     if(column_states[row] != COLUMNSTATE_EMPTY)
     {
-      /* if necessary, ignore the FN key if it was depressed at the time when
+      /* if necessary, ignore the FN keys if one was depressed at the time when
        * the command key was hit */
       if(fnkey == 0) return 0;
-      if(row != eeprom_read_byte(&CONFIG_POINTER->fnkey_row) ||
-         column_states[row] !=
-           (Columnstate)~((Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey_column)))
+
+      if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey1_row))
+      {
+        if(column_states[row] !=
+           (Columnstate)~((Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey1_column)))
+          return 0;
+      }
+      else if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey2_row))
+      {
+        if(column_states[row] !=
+           (Columnstate)~((Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey2_column)))
+          return 0;
+      }
+      else
         return 0;
     }
   }
@@ -63,10 +74,15 @@ static uint8_t get_command_key(uint8_t fnkey)
     Columnstate state=column_states[row];
     if(state == COLUMNSTATE_EMPTY) continue;
 
-    /* if necessary, ignore the FN key if it was depressed at the time when
+    /* if necessary, ignore the FN keys if one was depressed at the time when
      * the command key was hit */
-    if(fnkey && row == eeprom_read_byte(&CONFIG_POINTER->fnkey_row))
-      state|=(Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey_column);
+    if(fnkey)
+    {
+      if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey1_row))
+        state|=(Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey1_column);
+      else if(row == eeprom_read_byte(&CONFIG_POINTER->fnkey2_row))
+        state|=(Columnstate)1 << eeprom_read_byte(&CONFIG_POINTER->fnkey2_column);
+    }
 
     for(uint8_t col=0; col < NUM_OF_COLUMNS; ++col, state>>=1)
     {
@@ -136,42 +152,46 @@ static uint8_t scankeys(void)
 #endif /* DEBOUNCE_ITERATIONS */
 
   static Mode mode;
-  static char function_mode_active;
 #ifdef LED_ONOFF
   static char scrlck_led_state;
 #endif /* LED_ONOFF */
 
-  switch(mode&MODE_CMDMASK)
+  switch(mode)
   {
    case MODE_NORMAL:
-    if(((mode=process_columns())&MODE_CMDMASK) == MODE_NORMAL)
+    {
+    uint8_t prev_fnkeys=current_fnkey_combination;
+
+    if((mode=process_columns()) == MODE_NORMAL)
     {
       /* so we need to construct a USB report... */
-      if((mode&MODE_WITH_FUNCTION) != function_mode_active)
+      if(current_fnkey_combination != prev_fnkeys)
       {
         /* function key state has toggled */
-        function_mode_active=mode&MODE_WITH_FUNCTION;
-        if(function_mode_active)
+        uint8_t temp=get_current_keymap_index(current_fnkey_combination);
+
+        if(current_fnkey_combination)
         {
-          uint8_t temp=get_current_keymap_index(1);
-          if(temp != get_current_keymap_index(0)) set_current_keymap(temp,0);
+          if(temp != get_current_keymap_index(0))
+            set_current_keymap(temp,0);
         }
         else
         {
-          uint8_t temp=get_current_keymap_index(0);
-          if(temp != get_current_keymap_index(1)) set_current_keymap(temp,0);
+          if(temp != get_current_keymap_index(prev_fnkeys))
+            set_current_keymap(temp,0);
         }
       }
       return 1;
     }
     break;
+    }
    case MODE_ENTER_COMMAND:
    case MODE_LEAVE_COMMAND:
     /* wait until no key is pressed for a smooth transition between normal and
      * command mode */
-    if(wait_no_keys(mode&MODE_FNMASK))
+    if(wait_no_keys(current_fnkey_combination))
     {
-      if((mode&MODE_CMDMASK) == MODE_ENTER_COMMAND)
+      if(mode == MODE_ENTER_COMMAND)
       {
         MODE_TRANSITION(mode,MODE_COMMAND);
 #ifdef LED_ONOFF
@@ -193,16 +213,20 @@ static uint8_t scankeys(void)
       }
     }
     break;
-   case MODE_GET_FNKEY_ENTER:
+   case MODE_GET_FNKEY1_ENTER:
+   case MODE_GET_FNKEY2_ENTER:
     /* mode only reachable if FN is not depressed */
-    if(wait_no_keys(0)) mode=MODE_GET_FNKEY;
+    if(wait_no_keys(0))
+    {
+      mode=(mode == MODE_GET_FNKEY1_ENTER)?MODE_GET_FNKEY1:MODE_GET_FNKEY2;
+    }
     break;
    case MODE_COMMAND:
     MODE_TRANSITION(mode,MODE_LEAVE_COMMAND);
 
-    uint8_t temp=get_command_key(mode&MODE_FNMASK);
+    uint8_t temp=get_command_key(current_fnkey_combination);
 
-    temp=((mode&MODE_WITH_FUNCTION) == 0)
+    temp=(current_fnkey_combination == 0)
       ?process_command(temp)
       :process_fnkey_command(temp);
 
@@ -219,16 +243,26 @@ static uint8_t scankeys(void)
       MODE_TRANSITION(mode,temp);
     }
     break;
-   case MODE_GET_FNKEY:
-    mode=MODE_LEAVE_COMMAND;
-
-    uint8_t row, col;
-    if(get_first_valid_fn_row_column(&row,&col) == 0)
+   case MODE_GET_FNKEY1:
+   case MODE_GET_FNKEY2:
     {
-      eeprom_write_byte(&CONFIG_POINTER->fnkey_row,row);
-      eeprom_write_byte(&CONFIG_POINTER->fnkey_column,col);
+      uint8_t row, col;
+      if(get_first_valid_fn_row_column(&row,&col) == 0)
+      {
+        if(mode == MODE_GET_FNKEY1)
+        {
+          eeprom_write_byte(&CONFIG_POINTER->fnkey1_row,row);
+          eeprom_write_byte(&CONFIG_POINTER->fnkey1_column,col);
+        }
+        else
+        {
+          eeprom_write_byte(&CONFIG_POINTER->fnkey2_row,row);
+          eeprom_write_byte(&CONFIG_POINTER->fnkey2_column,col);
+        }
+      }
+      mode=MODE_LEAVE_COMMAND;
+      break;
     }
-    break;
   }
 
   return 0;

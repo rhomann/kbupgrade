@@ -101,7 +101,7 @@ static uint8_t get_current_keymap_index(uint8_t fnkey)
   if(fnkey == 0)
     return eeprom_read_byte(&CONFIG_POINTER->current_keymap_index);
   else
-    return eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index);
+    return eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1]);
 }
 
 static void write_current_keymap_index(uint8_t fnkey, uint8_t idx)
@@ -113,8 +113,8 @@ static void write_current_keymap_index(uint8_t fnkey, uint8_t idx)
   }
   else
   {
-    if(eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index) != idx)
-      eeprom_write_byte(&CONFIG_POINTER->fnkey_keymap_index,idx);
+    if(eeprom_read_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1]) != idx)
+      eeprom_write_byte(&CONFIG_POINTER->fnkey_keymap_index[fnkey-1],idx);
   }
 }
 

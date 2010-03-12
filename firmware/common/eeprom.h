@@ -27,10 +27,11 @@
 typedef struct
 {
   uint8_t current_keymap_index;
-  uint8_t fnkey_row;
-  uint8_t fnkey_column;
-  uint8_t fnkey_keymap_index;
-  uint8_t reserved[4];  /* reserve a few bytes for extensions */
+  uint8_t fnkey1_row;
+  uint8_t fnkey1_column;
+  uint8_t fnkey2_row;
+  uint8_t fnkey2_column;
+  uint8_t fnkey_keymap_index[3];
 } PersistentConfig;
 
 #define KEYMAP_POINTER_FROM_INDEX(I)  ((uint8_t *)sizeof(PersistentConfig)+\
