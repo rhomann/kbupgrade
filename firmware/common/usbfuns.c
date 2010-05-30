@@ -140,7 +140,13 @@ static usbMsgLen_t handle_request(const usbRequest_t *rq)
     }
    case KURQ_RESET:
     /* loop "endlessly" for ~0.5s */
-    WDTCR=_BV(WDTOE)|_BV(WDE)|_BV(WDP2)|_BV(WDP0);
+    WDTCR=
+#ifdef WDTOE
+      _BV(WDTOE)|
+#else /* !WDTOE */
+      _BV(WDCE)|
+#endif /* WDTOE */
+      _BV(WDE)|_BV(WDP2)|_BV(WDP0);
     while(1);
    default:
     return 0;

@@ -12,7 +12,7 @@ AC_DEFUN([KU_MSG_WARN],[
 
 AC_ARG_WITH([avr-type],
   [AS_HELP_STRING([--with-avr-type],
-                  [compile firmware for selected AVR (atmega16 (default), atmega32)]) ],
+                  [compile firmware for selected AVR (atmega16 (default), atmega32, atmega162)]) ],
   [ AVRTYPE="${withval}" ],
   [ AVRTYPE=atmega16 ]
 )
@@ -54,17 +54,54 @@ AC_ARG_WITH([avrdude-programmer],
 #     10   SPM is not allowed to write to boot section
 #     11   no restriction on application section
 #     11   no memory lock features
+#
+#
+# For ATMEGA162:
+#
+#   fuse byte low:
+#     1    do not divide clock by 8
+#     1    no clock output on B0
+#     01   crystal oscillator with brown-out detector
+#     111  8-... MHz (high speed mode)
+#     1    crystal oscillator
+#
+#   fuse byte high:
+#     1    disable OCD
+#     1    disable JTAG
+#     0    enable SPI
+#     1    watchdog timer not always on
+#     0    preserve EEPROM
+#     00   boot area size 1024 words, 2 kB
+#     0    reset vector to boot loader area
+#
+#   extended fuse byte:
+#     111  (nothing)
+#     0    ATMEGA161 compatibility mode
+#     100  brown-out detector triggers at 4.3 V
+#     1    (nothing)
+#
+#   lock fuse: same as ATMEGA16
+#
 AS_CASE([$AVRTYPE],
   [atmega16],
   [ BOOTLOADER_ADDRESS=0x3800
     LOFUSE=0x1f
     HIFUSE=0xd0
+    EXTFUSE=
     LOCKFUSE=0x2f
   ],
   [atmega32],
   [ BOOTLOADER_ADDRESS=0x7800
     LOFUSE=0x1f
     HIFUSE=0xd2
+    EXTFUSE=
+    LOCKFUSE=0x2f
+  ],
+  [atmega162],
+  [ BOOTLOADER_ADDRESS=0x3800
+    LOFUSE=0xdf
+    HIFUSE=0xd0
+    EXTFUSE=0xe9
     LOCKFUSE=0x2f
   ],
   [ AC_MSG_ERROR([Unsupported AVR type: $AVRTYPE]) ]
@@ -76,6 +113,7 @@ AC_SUBST([AVRPROG])
 AC_SUBST([BOOTLOADER_ADDRESS])
 AC_SUBST([LOFUSE])
 AC_SUBST([HIFUSE])
+AC_SUBST([EXTFUSE])
 AC_SUBST([LOCKFUSE])
 
 USBVENDORSTR='Robert Homann '"$PACKAGE_BUGREPORT"
@@ -155,8 +193,13 @@ prog='$(PROGTOOL) -p $(AVRTYPE) -c $(AVRPROG)'
 PROGTOOL="$AVRDUDE"
 PROG="$prog"' -U flash:w:$<'
 PROGLOCK="$prog"' -U lock:w:$(LOCKFUSE):m'
-PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m'
-PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2>/dev/null'
+AS_IF([test -z "$EXTFUSE"],
+      [ PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m'
+        PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U lock:r:-:h 2>/dev/null'
+      ],
+      [ PROGFUSES="$prog"' -U lfuse:w:$(LOFUSE):m -U hfuse:w:$(HIFUSE):m -U efuse:w:$(EXTFUSE):m'
+        PROGREADFUSES="$prog"' -U lfuse:r:-:h -U hfuse:r:-:h -U efuse:r:-:h -U lock:r:-:h 2>/dev/null'
+      ])
 
 AC_SUBST([PROGTOOL])
 AC_SUBST([PROG])
